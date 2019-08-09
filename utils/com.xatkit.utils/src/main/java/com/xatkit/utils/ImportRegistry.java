@@ -621,7 +621,11 @@ public class ImportRegistry {
 			System.out.println("XATKIT environment variable not set, no core platforms to import");
 			return;
 		}
-		Files.walk(Paths.get(xatkitPath + "plugins" + File.separator + "platforms"), Integer.MAX_VALUE)
+		/*
+		 * Create a File instance to uniformize trailing '/' between Linux and Windows installations.
+		 */
+		File xatkitFile = new File(xatkitPath);
+		Files.walk(Paths.get(xatkitFile.getAbsolutePath() + File.separator + "plugins" + File.separator + "platforms"), Integer.MAX_VALUE)
 			.filter(filePath -> 
 				!Files.isDirectory(filePath) && filePath.toString().endsWith(".xmi")
 		).forEach(modelPath -> {
