@@ -2,7 +2,7 @@
 <feature
       id="com.xatkit.feature"
       label="Xatkit DSLs"
-      version="2.0.0"
+      version="2.0.1.qualifier"
       provider-name="SOM Research Lab">
 
    <description url="https://github.com/xatkit-bot-platform/xatkit/wiki">
