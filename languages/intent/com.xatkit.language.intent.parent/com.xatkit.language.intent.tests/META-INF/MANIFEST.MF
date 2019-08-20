@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: com.xatkit.language.intent.tests
 Bundle-Vendor: SOM Research Lab
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.0.0
 Bundle-SymbolicName: com.xatkit.language.intent.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: com.xatkit.language.intent;bundle-version="2.0.0",

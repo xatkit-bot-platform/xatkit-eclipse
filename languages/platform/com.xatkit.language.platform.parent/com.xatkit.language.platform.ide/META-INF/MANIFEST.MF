@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: com.xatkit.language.platform.ide
 Bundle-Vendor: SOM Research Lab
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.0.0
 Bundle-SymbolicName: com.xatkit.language.platform.ide;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext.ide;bundle-version="2.15.0",
