@@ -1,6 +1,8 @@
 Xatkit Eclipse Plugins
 =====
 
+[![Wiki Badge](https://img.shields.io/badge/doc-wiki-blue)](https://github.com/xatkit-bot-platform/xatkit-releases/wiki)
+
 This repository contains the Eclipse plugins to create and edit Xatkit bots.
 
 ## Installation
