@@ -281,13 +281,13 @@ public class ImportRegistry {
 	private void loadXatkitCore() {
 		try {
 			loadXatkitCorePlatforms();
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException e) {
 			System.out.println("An error occurred when loading core platforms");
 			e.printStackTrace();
 		}
 		try {
 			loadXatkitCoreLibraries();
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException e) {
 			System.out.println("An error occurred when loading core libraries");
 			e.printStackTrace();
 		}
@@ -571,53 +571,62 @@ public class ImportRegistry {
 	}
 
 	/**
-	 * Loads the core {@link Library} instances.
+	 * Loads the core {@link Library}s.
 	 * <p>
-	 * These {@link Library} instances are retrieved from the {@code xatkit.jar} file in the classpath.
+	 * These {@link Library}s are retrieved from the {@code XATKIT} environment variable. If this variable is not set
+	 * check <a href="https://github.com/xatkit-bot-platform/xatkit-releases/wiki/Installation">this tutorial</a> to
+	 * setup your Xatkit environment.
 	 * 
-	 * @throws IOException if the registry cannot find one of the core {@link Library} files
-	 * @throws URISyntaxException if an error occurred when building one of the {@link Library}'s {@link URI}s
-	 * 
-	 * @see #getCoreResourcesPath(String)
+	 * @throws IOException if an error occurred when retrieving the installed Xatkit libraries
 	 */
-	private void loadXatkitCoreLibraries() throws IOException, URISyntaxException {
+	private void loadXatkitCoreLibraries() throws IOException {
 		incrementLoadCalls();
-		Path libraryPath = getCoreResourcesPath("libraries/xmi/");
-		System.out.println(MessageFormat.format("Crawling libraries in {0}", libraryPath));
-		Files.walk(libraryPath, 1).filter(filePath -> !Files.isDirectory(filePath)).forEach(modelPath -> {
-			try {
-				InputStream is = Files.newInputStream(modelPath);
-				rSet.getURIConverter().getURIMap().put(
-						URI.createURI(LibraryLoaderUtils.CORE_LIBRARY_PATHMAP + modelPath.getFileName()),
-						URI.createURI(modelPath.getFileName().toString()));
-				Resource modelResource = this.rSet.createResource(
-						URI.createURI(LibraryLoaderUtils.CORE_LIBRARY_PATHMAP + modelPath.getFileName().toString()));
-				modelResource.load(is, Collections.emptyMap());
-				System.out.println(MessageFormat.format("Library resource {0} loaded (uri={1})",
-						modelPath.getFileName(), modelResource.getURI()));
-				is.close();
-			} catch (IOException e) {
-				// TODO check why this exception cannot be thrown back to the caller (probably some lambda shenanigans)
-				System.out.println(MessageFormat.format("An error occurred when loading the library resource {0}",
-						modelPath.getFileName()));
-			}
-		});
+		String xatkitPath = System.getenv("XATKIT");
+		if (isNull(xatkitPath) || xatkitPath.isEmpty()) {
+			System.out.println("XATKIT environment variable not set, no core libraries to import");
+			return;
+		}
+		/*
+		 * Create a File instance to uniformize trailing '/' between Linux and Windows installations.
+		 */
+		File xatkitFile = new File(xatkitPath);
+		Files.walk(Paths.get(xatkitFile.getAbsolutePath() + File.separator + "plugins" + File.separator + "libraries"),
+				Integer.MAX_VALUE)
+				.filter(filePath -> !Files.isDirectory(filePath) && filePath.toString().endsWith(".xmi"))
+				.forEach(modelPath -> {
+					try {
+						InputStream is = Files.newInputStream(modelPath);
+						rSet.getURIConverter().getURIMap().put(
+								URI.createURI(LibraryLoaderUtils.CORE_LIBRARY_PATHMAP + modelPath.getFileName()),
+								URI.createURI(modelPath.getFileName().toString()));
+						Resource modelResource = this.rSet.createResource(URI.createURI(
+								LibraryLoaderUtils.CORE_LIBRARY_PATHMAP + modelPath.getFileName().toString()));
+						modelResource.load(is, Collections.emptyMap());
+						System.out.println(MessageFormat.format("Library resource {0} loaded (uri={1})",
+								modelPath.getFileName(), modelResource.getURI()));
+						is.close();
+					} catch (IOException e) {
+						// TODO check why this exception cannot be thrown back to the caller (probably some lambda
+						// shenanigans)
+						System.out.println(MessageFormat.format(
+								"An error occurred when loading the library resource {0}", modelPath.getFileName()));
+					}
+				});
 	}
 
 	/**
 	 * Loads the core {@link Platform}s.
 	 * <p>
-	 * These {@link Platform}s are retrieved from the {@code xatkit.jar} file in the classpath.
+	 * These {@link Platform}s are retrieved from the {@code XATKIT} environment variable. If this variable is not set
+	 * check <a href="https://github.com/xatkit-bot-platform/xatkit-releases/wiki/Installation">this tutorial</a> to
+	 * setup your Xatkit environment.
 	 * 
-	 * @throws IOException if the registry cannot find one of the core {@link Platform} files
-	 * @throws URISyntaxException if an error occurred when building one of the {@link Platform}'s {@link URI}s
-	 * 
-	 * @see #getCoreResourcesPath(String)
+	 * @throws IOException if an error occurred when retrieving the installed Xatkit platforms
 	 */
-	private void loadXatkitCorePlatforms() throws IOException, URISyntaxException {
+	private void loadXatkitCorePlatforms() throws IOException {
 		incrementLoadCalls();
 		String xatkitPath = System.getenv("XATKIT");
-		if(isNull(xatkitPath) || xatkitPath.isEmpty()) {
+		if (isNull(xatkitPath) || xatkitPath.isEmpty()) {
 			System.out.println("XATKIT environment variable not set, no core platforms to import");
 			return;
 		}
@@ -625,83 +634,28 @@ public class ImportRegistry {
 		 * Create a File instance to uniformize trailing '/' between Linux and Windows installations.
 		 */
 		File xatkitFile = new File(xatkitPath);
-		Files.walk(Paths.get(xatkitFile.getAbsolutePath() + File.separator + "plugins" + File.separator + "platforms"), Integer.MAX_VALUE)
-			.filter(filePath -> 
-				!Files.isDirectory(filePath) && filePath.toString().endsWith(".xmi")
-		).forEach(modelPath -> {
-			try {
-				InputStream is = Files.newInputStream(modelPath);
-				rSet.getURIConverter().getURIMap().put(
-						URI.createURI(PlatformLoaderUtils.CORE_PLATFORM_PATHMAP + modelPath.getFileName()),
-						URI.createURI(modelPath.getFileName().toString()));
-				Resource modelResource = this.rSet.createResource(
-						URI.createURI(PlatformLoaderUtils.CORE_PLATFORM_PATHMAP + modelPath.getFileName().toString()));
-				modelResource.load(is, Collections.emptyMap());
-				System.out.println(MessageFormat.format("Platform resource {0} loaded (uri={1})",
-						modelPath.getFileName(), modelResource.getURI()));
-				is.close();
-			} catch (IOException e) {
-				// TODO check why this exception cannot be thrown back to the caller (probably some lambda shenanigans)
-				System.out.println(MessageFormat.format("An error occurred when loading the platform resource {0}",
-						modelPath.getFileName()));
-			}
-		});
-	}
-
-	/**
-	 * Creates a valid {@link Path} for the provided {@code resourceLocation} within the {@code core_resources} bundle.
-	 * 
-	 * @param resourceLocation the location of the resource within the {@code core_resources} OSGI bundle
-	 * @return a valid {@link Path} for the provided {@code resourceLocation} within the {@code core_resources} bundle
-	 * @throws IOException if an error occurred when loading the resource at the provided location
-	 * @throws URISyntaxException if an error occurred when building the URI associated to the resource location
-	 */
-	private Path getCoreResourcesPath(String resourceLocation) throws IOException, URISyntaxException {
-		String bundleName = "com.xatkit.core_resources";
-		Bundle bundle = org.eclipse.core.runtime.Platform.getBundle(bundleName);
-		if (isNull(bundle)) {
-			throw new RuntimeException(MessageFormat.format("Cannot find the bundle {0}", bundleName));
-		}
-		URL platformFolderURL = bundle.getEntry(resourceLocation);
-		if (isNull(platformFolderURL)) {
-			System.out.println(MessageFormat.format(
-					"Cannot load the platforms/xmi/ folder from the bundle {0}, trying to load it in development mode",
-					bundle));
-			/*
-			 * If the plugin is not installed (i.e. if we are running an eclipse application from a workspace that
-			 * contains the plugin sources) the folder is located in src/main/resources.
-			 */
-			platformFolderURL = bundle.getEntry("src/main/resources/" + resourceLocation);
-			if (isNull(platformFolderURL)) {
-				throw new RuntimeException(MessageFormat.format(
-						"Cannot load the platforms/xmi/ folder from the bundle {0} (development mode failed)", bundle));
-			} else {
-				System.out.println(MessageFormat.format("{0} folder loaded from the bundle in development mode",
-						resourceLocation));
-			}
-		}
-
-		java.net.URI resolvedPlatformFolderURI = FileLocator.resolve(platformFolderURL).toURI();
-		System.out.println(MessageFormat.format("Resolved platforms/xmi/ folder URI: {0}", resolvedPlatformFolderURI));
-
-		if (resolvedPlatformFolderURI.getScheme().equals("jar")) {
-			try {
-				/*
-				 * Try to get the FileSystem if it exists, this may be the case if this method has been called to get
-				 * the path of a resource stored in a jar file.
-				 */
-				FileSystems.getFileSystem(resolvedPlatformFolderURI);
-			} catch (FileSystemNotFoundException e) {
-				/*
-				 * The FileSystem does not exist, try to create a new one with the provided URI. This is typically the
-				 * case when loading a resource from a jar file for the first time.
-				 */
-				Map<String, String> env = new HashMap<>();
-				env.put("create", "true");
-				FileSystems.newFileSystem(resolvedPlatformFolderURI, Collections.emptyMap());
-			}
-		}
-		return Paths.get(resolvedPlatformFolderURI);
+		Files.walk(Paths.get(xatkitFile.getAbsolutePath() + File.separator + "plugins" + File.separator + "platforms"),
+				Integer.MAX_VALUE)
+				.filter(filePath -> !Files.isDirectory(filePath) && filePath.toString().endsWith(".xmi"))
+				.forEach(modelPath -> {
+					try {
+						InputStream is = Files.newInputStream(modelPath);
+						rSet.getURIConverter().getURIMap().put(
+								URI.createURI(PlatformLoaderUtils.CORE_PLATFORM_PATHMAP + modelPath.getFileName()),
+								URI.createURI(modelPath.getFileName().toString()));
+						Resource modelResource = this.rSet.createResource(URI.createURI(
+								PlatformLoaderUtils.CORE_PLATFORM_PATHMAP + modelPath.getFileName().toString()));
+						modelResource.load(is, Collections.emptyMap());
+						System.out.println(MessageFormat.format("Platform resource {0} loaded (uri={1})",
+								modelPath.getFileName(), modelResource.getURI()));
+						is.close();
+					} catch (IOException e) {
+						// TODO check why this exception cannot be thrown back to the caller (probably some lambda
+						// shenanigans)
+						System.out.println(MessageFormat.format(
+								"An error occurred when loading the platform resource {0}", modelPath.getFileName()));
+					}
+				});
 	}
 
 	/**
