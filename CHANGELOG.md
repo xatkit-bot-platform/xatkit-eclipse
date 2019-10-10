@@ -8,6 +8,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## Unreleased
 
+## [2.1.0] - 2019-10-10
+
 ### Changed
 
 - Intent libraries are now loaded the same way as platforms (using `$XATKIT/plugins/libraries/` directory). This change doesn't break the public API if the latest version of Xatkit is installed. See [this issue](https://github.com/xatkit-bot-platform/xatkit-eclipse/issues/18) for additional information.
