@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Utils
 Bundle-SymbolicName: com.xatkit.utils;singleton:=true
-Bundle-Version: 2.1.0
+Bundle-Version: 2.1.1.qualifier
 Bundle-Activator: com.xatkit.utils.Activator
 Require-Bundle: org.eclipse.core.runtime,
  com.xatkit.intent;bundle-version="1.0.0";visibility:=reexport,
