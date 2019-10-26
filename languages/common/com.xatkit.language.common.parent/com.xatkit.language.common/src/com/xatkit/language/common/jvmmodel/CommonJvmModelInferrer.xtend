@@ -4,9 +4,7 @@
 package com.xatkit.language.common.jvmmodel
 
 import com.google.inject.Inject
-import com.xatkit.common.Program
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
 /**
@@ -45,7 +43,7 @@ class CommonJvmModelInferrer extends AbstractModelInferrer {
 	 *            rely on linking using the index if isPreIndexingPhase is
 	 *            <code>true</code>.
 	 */
-	def dispatch void infer(Program element, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
+//	def dispatch void infer(Program element, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
 		// Here you explain how your model is mapped to Java elements, by writing the actual translation code.
 		
 		// An implementation for the initial hello world example could look like this:
@@ -58,5 +56,5 @@ class CommonJvmModelInferrer extends AbstractModelInferrer {
 //				]
 //			}
 //		]
-	}
+//	}
 }
