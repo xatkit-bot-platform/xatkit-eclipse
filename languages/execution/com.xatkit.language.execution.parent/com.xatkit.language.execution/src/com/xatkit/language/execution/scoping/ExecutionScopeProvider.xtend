@@ -3,7 +3,6 @@
  */
 package com.xatkit.language.execution.scoping
 
-
 /**
  * This class contains custom scoping description.
  * 

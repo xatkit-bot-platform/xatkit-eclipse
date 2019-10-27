@@ -4,14 +4,7 @@
 package com.xatkit.language.execution.validation
 
 import com.xatkit.common.CommonPackage
-import com.xatkit.common.ContextAccess
 import com.xatkit.common.ImportDeclaration
-import com.xatkit.common.OperationCall
-import com.xatkit.common.StringLiteral
-import com.xatkit.execution.ExecutionModel
-import com.xatkit.execution.ExecutionPackage
-import com.xatkit.language.execution.ExecutionUtils
-import com.xatkit.platform.Parameter
 import com.xatkit.utils.ImportRegistry
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.validation.Check
@@ -25,13 +18,13 @@ import static java.util.Objects.isNull
  */
 class ExecutionValidator extends AbstractExecutionValidator {
 
-//	@Check
-//	def checkImportDefinition(ImportDeclaration i) {
-//		val Resource importedResource = ImportRegistry.getInstance.getOrLoadImport(i)
-//		if(isNull(importedResource)) {
-//			error("Cannot resolve the import " + i.path, CommonPackage.Literals.IMPORT_DECLARATION__PATH)
-//		}
-//	}
+	@Check
+	def checkImportDefinition(ImportDeclaration i) {
+		val Resource importedResource = ImportRegistry.getInstance.getOrLoadImport(i)
+		if(isNull(importedResource)) {
+			error("Cannot resolve the import " + i.path, CommonPackage.Literals.IMPORT_DECLARATION__PATH)
+		}
+	}
 //	
 //	@Check
 //	def checkDuplicatedAliases(ImportDeclaration i) {
@@ -43,19 +36,6 @@ class ExecutionValidator extends AbstractExecutionValidator {
 //		]
 //	}
 
-//	@Check
-//	def checkValidActionInstance(ActionInstance actionInstance) {
-//		val actionParameters = actionInstance.action.parameters;
-//		val actionInstanceParameters = actionInstance.values.map[v|v.parameter]
-//		for (Parameter p : actionParameters) {
-//			if (!actionInstanceParameters.contains(p)) {
-//				println('The parameter ' + p.key + ' is not set in the action instance')
-//				error('The parameter ' + p.key + ' is not set in the action instance',
-//					ExecutionPackage.Literals.ACTION_INSTANCE__VALUES)
-//			}
-//		}
-//	}
-//
 //	@Check
 //	def checkValidContextAccess(ContextAccess contextAccess) {
 //		val ExecutionModel executionModel = ExecutionUtils.getContainingExecutionModel(contextAccess)

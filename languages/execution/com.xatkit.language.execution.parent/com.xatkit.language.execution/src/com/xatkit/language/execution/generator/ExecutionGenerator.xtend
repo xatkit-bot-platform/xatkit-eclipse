@@ -5,18 +5,17 @@ package com.xatkit.language.execution.generator
 
 import java.util.Collections
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.AbstractGenerator
-import org.eclipse.xtext.generator.IFileSystemAccess2
-import org.eclipse.xtext.generator.IGeneratorContext
+import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.generator.IGenerator
 
 /**
  * Generates code from your model files on save.
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
-class ExecutionGenerator extends AbstractGenerator {
+class ExecutionGenerator implements IGenerator {
 
-	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
+	override doGenerate(Resource resource, IFileSystemAccess fsa) {
 		val uri = resource.URI
 		var rr = resource.resourceSet.createResource(uri.trimFileExtension.appendFileExtension("xmi"))
 		/*
@@ -27,4 +26,5 @@ class ExecutionGenerator extends AbstractGenerator {
 		rr.contents.addAll(resource.contents)
 		rr.save(Collections.emptyMap())
 	}
+	
 }
