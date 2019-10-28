@@ -10,6 +10,7 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import com.xatkit.metamodels.utils.RuntimeModel
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -59,9 +60,14 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 			acceptor.accept(platform.toClass(platform.name)) [
 				platform.actions.forEach [ action |
 					members += action.toMethod(action.name, typeRef(Object)) [
+						/*
+						 * If the parameter type / return type is not set we assume it is Object. This allows to support
+						 * existing platforms without major refactoring.
+						 */
 						action.parameters.forEach [ parameter |
-							parameters += parameter.toParameter(parameter.key, typeRef(String))
+							parameters += parameter.toParameter(parameter.key, parameter.type ?: typeRef(Object))
 						]
+						returnType = action.returnType ?: typeRef(Object)
 						static = true
 						body = '''
 							// This is a mock class, it shouldn't be called
