@@ -12,6 +12,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
+import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -42,6 +47,8 @@ import com.xatkit.metamodels.utils.PlatformLoaderUtils;
 import com.xatkit.platform.PlatformDefinition;
 import com.xatkit.platform.PlatformPackage;
 
+import static java.text.MessageFormat.format;
+
 /**
  * A registry managing Platform and Library imports.
  * <p>
@@ -52,6 +59,8 @@ import com.xatkit.platform.PlatformPackage;
  * use unqualified imports in execution models such as {@code import "CorePlatform"}.
  */
 public class ImportRegistry {
+
+	private static final Logger log = Logger.getLogger(ImportRegistry.class);
 
 	/**
 	 * The singleton {@link ImportRegistry} instance.
@@ -85,8 +94,7 @@ public class ImportRegistry {
 	 */
 	private static void incrementLoadCalls() {
 		FILE_LOADED_COUNT++;
-		// TODO replace the System.out.println call by a log
-		System.out.println("#File loaded " + FILE_LOADED_COUNT);
+		log.info(format("# File loaded: {0}", FILE_LOADED_COUNT));
 	}
 
 	/**
@@ -135,6 +143,32 @@ public class ImportRegistry {
 		this.libraries = new ConcurrentHashMap<>();
 	}
 
+	private Map<String, PlatformDefinition> internalPlatformAliases = new HashMap<>();
+
+	private Map<String, Library> internalLibraryAliases = new HashMap<>();
+
+	public void internalRegisterAlias(String alias, PlatformDefinition platformDefinition) {
+		this.rSet.getResources().add(platformDefinition.eResource());
+		this.internalPlatformAliases.put(alias, platformDefinition);
+	}
+
+	public void internalRegisterAlias(String alias, Library library) {
+		this.rSet.getResources().add(library.eResource());
+		this.internalLibraryAliases.put(alias, library);
+	}
+
+	// Called by xatkit internals
+	public void internalRegisterPlatform(String path, String alias, PlatformDefinition platformDefinition) {
+		this.rSet.getResources().add(platformDefinition.eResource());
+		this.platforms.put(ImportEntry.from(path, alias), platformDefinition);
+	}
+
+	// Called by xatkit internals
+	public void internalRegisterLibrary(String path, String alias, Library library) {
+		this.rSet.getResources().add(library.eResource());
+		this.libraries.put(ImportEntry.from(path, alias), library);
+	}
+
 	/**
 	 * Updates the {@link Library} cache with the provided {@code library}.
 	 * <p>
@@ -152,7 +186,7 @@ public class ImportRegistry {
 		for (Entry<ImportEntry, Library> librariesEntry : libraries.entrySet()) {
 			Library storedLibrary = librariesEntry.getValue();
 			if (library.getName().equals(storedLibrary.getName())) {
-				System.out.println("Updating library entry for " + library.getName());
+				log.info(format("Updating library entry for {0}", library.getName()));
 				librariesEntry.setValue(library);
 			}
 		}
@@ -175,7 +209,7 @@ public class ImportRegistry {
 		for (Entry<ImportEntry, PlatformDefinition> platformsEntry : platforms.entrySet()) {
 			PlatformDefinition storedPlatform = platformsEntry.getValue();
 			if (platform.getName().equals(storedPlatform.getName())) {
-				System.out.println("Updating platform entry for " + platform.getName());
+				log.info(format("Updating platform entry for {0}", platform.getName()));
 				platformsEntry.setValue(platform);
 			}
 		}
@@ -197,8 +231,8 @@ public class ImportRegistry {
 	public Resource getOrLoadImport(ImportDeclaration importDeclaration) {
 		Resource resource = this.getImport(importDeclaration);
 		if (resource == null) {
-			System.out.println("The import " + importDeclaration.getPath()
-					+ " wasn't found in the cache, loading the corresponding resource");
+			log.info(format("The import {0} (alias={1}) is not in the cache, loading the corresponding resource",
+					importDeclaration.getPath(), importDeclaration.getAlias()));
 			resource = this.loadImport(importDeclaration);
 		}
 		/*
@@ -216,7 +250,9 @@ public class ImportRegistry {
 	 */
 	public Collection<PlatformDefinition> getImportedPlatforms(PlatformDefinition platform) {
 		this.refreshRegisteredImports(platform.getImports());
-		return this.platforms.values();
+		List<PlatformDefinition> platformDefinitions = new ArrayList<PlatformDefinition>(this.platforms.values());
+		platformDefinitions.addAll(this.internalPlatformAliases.values());
+		return platformDefinitions;
 	}
 
 	/**
@@ -227,14 +263,16 @@ public class ImportRegistry {
 	 */
 	public Collection<PlatformDefinition> getImportedPlatforms(ExecutionModel executionModel) {
 		this.refreshRegisteredImports(executionModel.getImports());
-		return this.platforms.values();
+		List<PlatformDefinition> platformDefinitions = new ArrayList<PlatformDefinition>(this.platforms.values());
+		platformDefinitions.addAll(this.internalPlatformAliases.values());
+		return platformDefinitions;
 	}
 
 	/**
 	 * Returns the {@link PlatformDefinition} imported by the provided {@code model} with the given
 	 * {@code platformName}.
 	 * 
-	 * @param model the {@link ExecutionModel} to retrieve the imported {@link PlatformDefinition} from
+	 * @param model        the {@link ExecutionModel} to retrieve the imported {@link PlatformDefinition} from
 	 * @param platformName the name of the {@link PlatformDefinition} to retrieve
 	 * @return the imported {@link PlatformDefinition}, or {@code null} if there is no imported
 	 *         {@link PlatformDefinition} matching the provided {@code platformName}
@@ -257,7 +295,9 @@ public class ImportRegistry {
 	 */
 	public Collection<Library> getImportedLibraries(ExecutionModel executionModel) {
 		this.refreshRegisteredImports(executionModel.getImports());
-		return this.libraries.values();
+		List<Library> libraries = new ArrayList<Library>(this.libraries.values());
+		libraries.addAll(this.internalLibraryAliases.values());
+		return libraries;
 	}
 
 	/**
@@ -274,13 +314,13 @@ public class ImportRegistry {
 		try {
 			loadXatkitCorePlatforms();
 		} catch (IOException e) {
-			System.out.println("An error occurred when loading core platforms");
+			log.error("An error occurred when loading core platforms");
 			e.printStackTrace();
 		}
 		try {
 			loadXatkitCoreLibraries();
 		} catch (IOException e) {
-			System.out.println("An error occurred when loading core libraries");
+			log.error("An error occurred when loading core libraries");
 			e.printStackTrace();
 		}
 	}
@@ -322,14 +362,16 @@ public class ImportRegistry {
 		List<ImportEntry> entries = imports.stream().map(i -> ImportEntry.from(i)).collect(Collectors.toList());
 		for (ImportEntry importEntry : platforms.keySet()) {
 			if (!entries.contains(importEntry)) {
-				System.out.println("Removing " + importEntry.getPath() + " (alias = " + importEntry.getAlias() + ")");
+				log.info(format("Removing unused import {0} (alias={1})", importEntry.getPath(),
+						importEntry.getAlias()));
 				platforms.remove(importEntry);
 			}
 		}
 
 		for (ImportEntry importEntry : libraries.keySet()) {
 			if (!entries.contains(importEntry)) {
-				System.out.println("Removing " + importEntry.getPath() + " (alias = " + importEntry.getAlias() + ")");
+				log.info(format("Removing unused import {0} (alias={1})", importEntry.getPath(),
+						importEntry.getAlias()));
 				libraries.remove(importEntry);
 			}
 		}
@@ -345,19 +387,39 @@ public class ImportRegistry {
 	 */
 	private Resource getImport(ImportDeclaration importDeclaration) {
 		if (importDeclaration instanceof LibraryImportDeclaration) {
-			Library library = this.libraries.get(ImportEntry.from(importDeclaration));
+			Library library;
+			if (nonNull(importDeclaration.getAlias())) {
+				/*
+				 * If there is an alias it may have been set by the core component (see #internalRegisterAlias)
+				 */
+				library = this.internalLibraryAliases.get(importDeclaration.getAlias());
+				if (nonNull(library)) {
+					return library.eResource();
+				}
+			}
+			library = this.libraries.get(ImportEntry.from(importDeclaration));
 			if (nonNull(library)) {
 				return library.eResource();
 			} else {
-				System.out.println("Cannot find the library " + importDeclaration.getPath());
+				log.error(format("Cannot find the library {0}", importDeclaration.getPath()));
 				return null;
 			}
 		} else if (importDeclaration instanceof PlatformImportDeclaration) {
-			PlatformDefinition platform = this.platforms.get(ImportEntry.from(importDeclaration));
+			PlatformDefinition platform;
+			if (nonNull(importDeclaration.getAlias())) {
+				/*
+				 * If there is an alias it may have been set by the core component (see #internalRegisterAlias)
+				 */
+				platform = this.internalPlatformAliases.get(importDeclaration.getAlias());
+				if (nonNull(platform)) {
+					return platform.eResource();
+				}
+			}
+			platform = this.platforms.get(ImportEntry.from(importDeclaration));
 			if (nonNull(platform)) {
 				return platform.eResource();
 			} else {
-				System.out.println("Cannot find the platform " + importDeclaration.getPath());
+				log.error(format("Cannot find the platform {0}", importDeclaration.getPath()));
 				return null;
 			}
 		} else {
@@ -379,7 +441,8 @@ public class ImportRegistry {
 		incrementLoadCalls();
 		String path = importDeclaration.getPath();
 		String alias = importDeclaration.getAlias();
-		System.out.println(MessageFormat.format("Loading import from path {0}", path));
+		log.info(format("Loading import from path {0} (alias={1})", importDeclaration.getPath(),
+				importDeclaration.getAlias()));
 		/*
 		 * Try to load it as a core platform/library
 		 */
@@ -399,7 +462,7 @@ public class ImportRegistry {
 				resource = rSet.getResource(URI.createURI(uriPrefix + path), false);
 			}
 		} catch (Exception e) {
-			System.out.println("Cannot load the import as a core platform/library");
+			log.info("Cannot load the import as a core platform/library");
 		}
 		/*
 		 * The import is not a core platform, try to load it from its path, and register the resource using its alias.
@@ -429,7 +492,7 @@ public class ImportRegistry {
 				} else if (importDeclaration instanceof LibraryImportDeclaration) {
 					importResourceAliasURI = URI.createURI(LibraryLoaderUtils.CUSTOM_LIBRARY_PATHMAP + alias);
 				} else {
-					System.out.println(MessageFormat.format("Cannot load the provided import, unknown import type {0}",
+					log.error(format("Cannot load the provided import, unknown import type {0}",
 							importDeclaration.eClass().getName()));
 					return null;
 				}
@@ -455,13 +518,13 @@ public class ImportRegistry {
 					 */
 					if (nonNull(registeredResource.getURI().lastSegment())
 							&& registeredResource.getURI().lastSegment().equals(alias)) {
-						System.out.println(MessageFormat.format("Unregistering resource {0} from the ResourceSet",
-								importResourceAliasURI));
+						log.info(format("Unregistering resource {0} from the {1}", importResourceAliasURI,
+								ResourceSet.class.getSimpleName()));
 						registeredResources.remove();
 					}
 					if (registeredResource.getURI().equals(importResourceURI)) {
-						System.out.println(MessageFormat.format("Unregistering resource {0} from the ResourceSet",
-								importResourceURI));
+						log.info(format("Unregistering resource {0} from the {1}", importResourceURI,
+								ResourceSet.class.getSimpleName()));
 						registeredResources.remove();
 					}
 				}
@@ -482,20 +545,20 @@ public class ImportRegistry {
 			try {
 				resource.load(Collections.emptyMap());
 			} catch (IOException e) {
-				System.out.println("An error occurred when loading the resource");
+				log.error("An error occurred when loading the resource");
 				return null;
 			} catch (IllegalArgumentException e) {
-				System.out.println("An error occurred when loading the resource, invalid platform URI provided");
+				log.error("An error occurred when loading the resource, invalid platform URI provided");
 				return null;
 			}
 		} else {
-			System.out.println(
-					MessageFormat.format("Cannot find the resource asssociated to the import {0}", importDeclaration));
+			log.error(format("Cannot find the resource associated to the import {0} (alias={1})",
+					importDeclaration.getPath(), importDeclaration.getAlias()));
 			return null;
 		}
-		System.out.println(MessageFormat.format("Resource with URI {0} loaded", resource.getURI()));
+		log.info(format("Resource with URI {0} loaded", resource.getURI()));
 		if (resource.getContents().isEmpty()) {
-			System.out.println("The loaded resource is empty");
+			log.error("The loaded resource is empty");
 			return null;
 		}
 		for (EObject e : resource.getContents()) {
@@ -503,40 +566,37 @@ public class ImportRegistry {
 				PlatformDefinition platformDefinition = (PlatformDefinition) e;
 				if (importDeclaration instanceof PlatformImportDeclaration) {
 					if (this.platforms.containsKey(ImportEntry.from(importDeclaration))) {
-						System.out.println(MessageFormat.format("The platform {0} is already loaded, erasing it",
-								platformDefinition.getName()));
+						log.info(
+								format("The platform {0} is already loaded, erasing it", platformDefinition.getName()));
 					}
-					System.out.println(MessageFormat.format("Registering platform {0}", platformDefinition.getName()));
+					log.info(format("Registering platform {0}", platformDefinition.getName()));
 					this.platforms.put(ImportEntry.from(importDeclaration), platformDefinition);
 				} else {
-					System.out
-							.println(MessageFormat.format("Trying to load a {0} using a {1}, please use a {2} instead",
-									e.eClass().getName(), importDeclaration.getClass().getSimpleName(),
-									PlatformImportDeclaration.class.getSimpleName()));
+					log.error(format("Trying to load a {0} using a {1}, please use a {2} instead", e.eClass().getName(),
+							importDeclaration.getClass().getSimpleName(),
+							PlatformImportDeclaration.class.getSimpleName()));
 					return null;
 				}
 			} else if (e instanceof Library) {
 				Library library = (Library) e;
 				if (importDeclaration instanceof LibraryImportDeclaration) {
 					if (this.libraries.containsKey(ImportEntry.from(importDeclaration))) {
-						System.out.println(MessageFormat.format("The library {0} is already loaded, erasing it",
-								library.getName()));
+						log.info(format("The library {0} is already loaded, erasing it", library.getName()));
 					}
-					System.out.println(MessageFormat.format("Registering library {0}", library.getName()));
+					log.info(format("Registering library {0}", library.getName()));
 					this.libraries.put(ImportEntry.from(importDeclaration), library);
 				} else {
-					System.out
-							.println(MessageFormat.format("Trying to load a {0} using a {1}, please use a {2} instead",
-									e.eClass().getName(), importDeclaration.getClass().getSimpleName(),
-									LibraryImportDeclaration.class.getSimpleName()));
+					log.error(format("Trying to load a {0} using a {1}, please use a {2} instead", e.eClass().getName(),
+							importDeclaration.getClass().getSimpleName(),
+							LibraryImportDeclaration.class.getSimpleName()));
 					return null;
 				}
 			} else {
 				/*
 				 * The top level element is not a platform, we are not loading a valid Platform resource
 				 */
-				System.out.println(MessageFormat.format(
-						"The loaded resource contains the unknown top-level element {0}", e.eClass().getName()));
+				log.error(
+						format("The loaded resource contains the unknown top-level element {0}", e.eClass().getName()));
 				return null;
 			}
 		}
@@ -575,7 +635,7 @@ public class ImportRegistry {
 		incrementLoadCalls();
 		String xatkitPath = System.getenv("XATKIT");
 		if (isNull(xatkitPath) || xatkitPath.isEmpty()) {
-			System.out.println("XATKIT environment variable not set, no core libraries to import");
+			log.error("XATKIT environment variable not set, no core libraries to import");
 			return;
 		}
 		/*
@@ -594,14 +654,14 @@ public class ImportRegistry {
 						Resource modelResource = this.rSet.createResource(URI.createURI(
 								LibraryLoaderUtils.CORE_LIBRARY_PATHMAP + modelPath.getFileName().toString()));
 						modelResource.load(is, Collections.emptyMap());
-						System.out.println(MessageFormat.format("Library resource {0} loaded (uri={1})",
-								modelPath.getFileName(), modelResource.getURI()));
+						log.info(format("Library resource {0} loaded (uri={1})", modelPath.getFileName(),
+								modelResource.getURI()));
 						is.close();
 					} catch (IOException e) {
 						// TODO check why this exception cannot be thrown back to the caller (probably some lambda
 						// shenanigans)
-						System.out.println(MessageFormat.format(
-								"An error occurred when loading the library resource {0}", modelPath.getFileName()));
+						log.error(format("An error occurred when loading the library resource {0}",
+								modelPath.getFileName()));
 					}
 				});
 	}
@@ -619,7 +679,7 @@ public class ImportRegistry {
 		incrementLoadCalls();
 		String xatkitPath = System.getenv("XATKIT");
 		if (isNull(xatkitPath) || xatkitPath.isEmpty()) {
-			System.out.println("XATKIT environment variable not set, no core platforms to import");
+			log.error("XATKIT environment variable not set, no core platforms to import");
 			return;
 		}
 		/*
@@ -638,14 +698,14 @@ public class ImportRegistry {
 						Resource modelResource = this.rSet.createResource(URI.createURI(
 								PlatformLoaderUtils.CORE_PLATFORM_PATHMAP + modelPath.getFileName().toString()));
 						modelResource.load(is, Collections.emptyMap());
-						System.out.println(MessageFormat.format("Platform resource {0} loaded (uri={1})",
-								modelPath.getFileName(), modelResource.getURI()));
+						log.info(format("Platform resource {0} loaded (uri={1})", modelPath.getFileName(),
+								modelResource.getURI()));
 						is.close();
 					} catch (IOException e) {
 						// TODO check why this exception cannot be thrown back to the caller (probably some lambda
 						// shenanigans)
-						System.out.println(MessageFormat.format(
-								"An error occurred when loading the platform resource {0}", modelPath.getFileName()));
+						log.error(format("An error occurred when loading the platform resource {0}",
+								modelPath.getFileName()));
 					}
 				});
 	}
@@ -676,6 +736,10 @@ public class ImportRegistry {
 			return new ImportEntry(importDeclaration.getPath(), importDeclaration.getAlias());
 		}
 
+		public static ImportEntry from(String path, String alias) {
+			return new ImportEntry(path, alias);
+		}
+
 		/**
 		 * The path of the {@link ImportDeclaration} used to create the entry.
 		 */
@@ -692,7 +756,7 @@ public class ImportRegistry {
 		 * This method is private, use {@link #from(ImportDeclaration)} to create {@link ImportEntry} instances from
 		 * {@link ImportDeclaration}s.
 		 * 
-		 * @param path the path of the {@link ImportDeclaration} used to create the entry
+		 * @param path  the path of the {@link ImportDeclaration} used to create the entry
 		 * @param alias the alias of the {@link ImportDeclaration} used to create the entry
 		 * 
 		 * @see #from(ImportDeclaration)

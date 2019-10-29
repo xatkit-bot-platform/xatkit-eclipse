@@ -9,9 +9,11 @@ Require-Bundle: org.eclipse.core.runtime,
  com.xatkit.platform;bundle-version="1.0.0";visibility:=reexport,
  com.xatkit.execution;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;bundle-version="2.15.0",
- com.xatkit.metamodels-utils;bundle-version="1.0.0"
+ com.xatkit.metamodels-utils;bundle-version="1.0.0",
+ org.eclipse.core.resources;bundle-version="3.13.100"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: com.xatkit.utils
 Bundle-ActivationPolicy: lazy
 Export-Package: com.xatkit.utils
 Bundle-Vendor: SOM Research Lab
+Import-Package: org.apache.log4j

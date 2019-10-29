@@ -39,7 +39,7 @@
 		    <groupId>org.eclipse.platform</groupId>
 		    <artifactId>org.eclipse.core.runtime</artifactId>
 		</dependency>
-
+		
         <!-- Xatkit Internal -->
         
         <dependency>

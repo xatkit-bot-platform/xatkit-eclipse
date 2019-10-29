@@ -2,12 +2,15 @@ package com.xatkit.language.execution;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.text.MessageFormat.format;
+
 
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -25,15 +28,17 @@ import com.xatkit.utils.ImportRegistry;
 
 public class ExecutionLinkingService extends DefaultLinkingService {
 
+	private static final Logger log = Logger.getLogger(ExecutionLinkingService.class);
+	
 	public ExecutionLinkingService() {
 		super();
-		System.out.println("Created Execution Linking Service");
+		log.info(format("{0} started", this.getClass().getSimpleName()));
 	}
 
 	@Override
 	public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) throws IllegalNodeException {
-		System.out.println("Linking context: " + context);
-		System.out.println("Linking reference: " + ref);
+		log.info(format("Linking context: {0}", context));
+		log.info(format("Linking reference: {0}", ref));
 		if (context instanceof ExecutionModel) {
 			return getLinkedObjectsForExecutionModel((ExecutionModel) context, ref, node);
 		} else if (context instanceof ExecutionRule) {
@@ -99,8 +104,7 @@ public class ExecutionLinkingService extends DefaultLinkingService {
 			/*
 			 * We don't handle qualified name that contain multiple or no qualifier.
 			 */
-			System.out.println(
-					MessageFormat.format("Cannot compute a qualified name from the provided String {0}", from));
+			log.warn(format("Cannot compute a qualified name from the provided String {0}", from));
 			return null;
 		} else {
 			return new QualifiedName(splitted[0], splitted[1]);

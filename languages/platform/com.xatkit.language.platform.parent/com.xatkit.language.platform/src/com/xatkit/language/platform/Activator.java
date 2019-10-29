@@ -1,5 +1,7 @@
 package com.xatkit.language.platform;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EPackage;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -30,7 +32,8 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-		System.out.println("Registering Xatkit Language EPackages");
+		Logger.getRootLogger().setLevel(Level.INFO);
+		Logger.getLogger(Activator.class).info("Registering Xatkit Language EPackages");
 		EPackage.Registry.INSTANCE.put(IntentPackage.eNS_URI, IntentPackage.eINSTANCE);
 		EPackage.Registry.INSTANCE.put(PlatformPackage.eNS_URI, PlatformPackage.eINSTANCE);
 	}
