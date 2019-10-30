@@ -143,17 +143,38 @@ public class ImportRegistry {
 		this.libraries = new ConcurrentHashMap<>();
 	}
 
+	/**
+	 * Reset the internal data structures and sets the provided {@link ResourceSet} to load resources.
+	 * <p>
+	 * This method is used by Xatkit core component to share the runtime {@link ResourceSet} with the one from the
+	 * {@link ImportRegistry}. Xatkit Eclipse editors should not call it directly.
+	 * 
+	 * @param rSet the {@link ResourceSet} to use to load resources.
+	 */
+	public void setResourceSet(ResourceSet rSet) {
+		this.internalLibraryAliases.clear();
+		this.internalPlatformAliases.clear();
+		this.libraries.clear();
+		this.platforms.clear();
+		FILE_LOADED_COUNT = 0;
+		this.rSet = rSet;
+	}
+
 	private Map<String, PlatformDefinition> internalPlatformAliases = new HashMap<>();
 
 	private Map<String, Library> internalLibraryAliases = new HashMap<>();
 
 	public void internalRegisterAlias(String alias, PlatformDefinition platformDefinition) {
-		this.rSet.getResources().add(platformDefinition.eResource());
+		if (!rSet.getResources().contains(platformDefinition.eResource())) {
+			this.rSet.getResources().add(platformDefinition.eResource());
+		}
 		this.internalPlatformAliases.put(alias, platformDefinition);
 	}
 
 	public void internalRegisterAlias(String alias, Library library) {
-		this.rSet.getResources().add(library.eResource());
+		if (!rSet.getResources().contains(library.eResource())) {
+			this.rSet.getResources().add(library.eResource());
+		}
 		this.internalLibraryAliases.put(alias, library);
 	}
 
