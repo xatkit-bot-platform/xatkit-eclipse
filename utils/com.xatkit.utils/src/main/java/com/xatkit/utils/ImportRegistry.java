@@ -1,5 +1,6 @@
 package com.xatkit.utils;
 
+import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -21,12 +22,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -46,8 +44,6 @@ import com.xatkit.metamodels.utils.LibraryLoaderUtils;
 import com.xatkit.metamodels.utils.PlatformLoaderUtils;
 import com.xatkit.platform.PlatformDefinition;
 import com.xatkit.platform.PlatformPackage;
-
-import static java.text.MessageFormat.format;
 
 /**
  * A registry managing Platform and Library imports.
@@ -470,12 +466,15 @@ public class ImportRegistry {
 		Resource resource = null;
 		try {
 			String uriPrefix;
+			String uriSuffix;
 			if (importDeclaration instanceof PlatformImportDeclaration) {
 				uriPrefix = PlatformLoaderUtils.CORE_PLATFORM_PATHMAP;
+				uriSuffix = ".platform";
 			} else {
 				uriPrefix = LibraryLoaderUtils.CORE_LIBRARY_PATHMAP;
+				uriSuffix = ".intent";
 			}
-			resource = rSet.getResource(URI.createURI(uriPrefix + path + ".xmi"), false);
+			resource = rSet.getResource(URI.createURI(uriPrefix + path + uriSuffix), false);
 			if (isNull(resource)) {
 				/*
 				 * In case .xmi has been specified within the import
@@ -665,7 +664,7 @@ public class ImportRegistry {
 		File xatkitFile = new File(xatkitPath);
 		Files.walk(Paths.get(xatkitFile.getAbsolutePath() + File.separator + "plugins" + File.separator + "libraries"),
 				Integer.MAX_VALUE)
-				.filter(filePath -> !Files.isDirectory(filePath) && filePath.toString().endsWith(".xmi"))
+				.filter(filePath -> !Files.isDirectory(filePath) && filePath.toString().endsWith(".intent"))
 				.forEach(modelPath -> {
 					try {
 						InputStream is = Files.newInputStream(modelPath);
@@ -709,7 +708,7 @@ public class ImportRegistry {
 		File xatkitFile = new File(xatkitPath);
 		Files.walk(Paths.get(xatkitFile.getAbsolutePath() + File.separator + "plugins" + File.separator + "platforms"),
 				Integer.MAX_VALUE)
-				.filter(filePath -> !Files.isDirectory(filePath) && filePath.toString().endsWith(".xmi"))
+				.filter(filePath -> !Files.isDirectory(filePath) && filePath.toString().endsWith(".platform"))
 				.forEach(modelPath -> {
 					try {
 						InputStream is = Files.newInputStream(modelPath);
