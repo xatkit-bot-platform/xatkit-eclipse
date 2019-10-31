@@ -58,7 +58,7 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 		 */
 		ImportRegistry.instance.getImportedPlatforms(element).forEach [ platform |
 			acceptor.accept(platform.toClass(platform.name)) [
-				platform.actions.forEach [ action |
+				((platform.extends?.actions ?: #[]) + platform.actions).forEach [ action |
 					members += action.toMethod(action.name, typeRef(Object)) [
 						/*
 						 * If the parameter type / return type is not set we assume it is Object. This allows to support
