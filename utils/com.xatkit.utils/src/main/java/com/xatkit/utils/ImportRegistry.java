@@ -459,6 +459,14 @@ public class ImportRegistry {
 		incrementLoadCalls();
 		String path = importDeclaration.getPath();
 		String alias = importDeclaration.getAlias();
+		/*
+		 * Prepend the file extension to the alias to ensure the correct resource factory is loaded.
+		 */
+		if(importDeclaration instanceof PlatformImportDeclaration) {
+			alias += ".platform";
+		} else if(importDeclaration instanceof LibraryImportDeclaration) {
+			alias += ".intent";
+		}
 		log.info(format("Loading import from path {0} (alias={1})", importDeclaration.getPath(),
 				importDeclaration.getAlias()));
 		/*
@@ -512,9 +520,9 @@ public class ImportRegistry {
 				 * Add the extension to be sure the correct resource factory will be used.
 				 */
 				if (importDeclaration instanceof PlatformImportDeclaration) {
-					importResourceAliasURI = URI.createURI(PlatformLoaderUtils.CUSTOM_PLATFORM_PATHMAP + alias + ".platform");
+					importResourceAliasURI = URI.createURI(PlatformLoaderUtils.CUSTOM_PLATFORM_PATHMAP + alias);
 				} else if (importDeclaration instanceof LibraryImportDeclaration) {
-					importResourceAliasURI = URI.createURI(LibraryLoaderUtils.CUSTOM_LIBRARY_PATHMAP + alias + ".intent");
+					importResourceAliasURI = URI.createURI(LibraryLoaderUtils.CUSTOM_LIBRARY_PATHMAP + alias);
 				} else {
 					log.error(format("Cannot load the provided import, unknown import type {0}",
 							importDeclaration.eClass().getName()));
@@ -637,12 +645,16 @@ public class ImportRegistry {
 	 * @param uri the {@link URI} to remove the alias for
 	 */
 	private void removeAliasForURI(URI uri) {
-		Iterator<Map.Entry<URI, URI>> uriMapEntries = rSet.getURIConverter().getURIMap().entrySet().iterator();
-		while (uriMapEntries.hasNext()) {
-			Map.Entry<URI, URI> uriMapEntry = uriMapEntries.next();
-			if (uriMapEntry.getValue().equals(uri)) {
-				uriMapEntries.remove();
+		if(nonNull(uri)) {
+			Iterator<Map.Entry<URI, URI>> uriMapEntries = rSet.getURIConverter().getURIMap().entrySet().iterator();
+			while (uriMapEntries.hasNext()) {
+				Map.Entry<URI, URI> uriMapEntry = uriMapEntries.next();
+				if (uri.equals(uriMapEntry.getValue())) {
+					uriMapEntries.remove();
+				}
 			}
+		} else {
+			log.warn(format("Cannot remove the provided URI {0}", uri));
 		}
 	}
 
