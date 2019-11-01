@@ -38,6 +38,7 @@ import com.xatkit.common.LibraryImportDeclaration;
 import com.xatkit.common.PlatformImportDeclaration;
 import com.xatkit.execution.ExecutionModel;
 import com.xatkit.execution.ExecutionPackage;
+import com.xatkit.execution.util.ExecutionSwitch;
 import com.xatkit.intent.IntentPackage;
 import com.xatkit.intent.Library;
 import com.xatkit.metamodels.utils.LibraryLoaderUtils;
@@ -507,10 +508,13 @@ public class ImportRegistry {
 			URI importResourceURI = importResourceFileURI;
 			if (nonNull(alias)) {
 				URI importResourceAliasURI;
+				/*
+				 * Add the extension to be sure the correct resource factory will be used.
+				 */
 				if (importDeclaration instanceof PlatformImportDeclaration) {
-					importResourceAliasURI = URI.createURI(PlatformLoaderUtils.CUSTOM_PLATFORM_PATHMAP + alias);
+					importResourceAliasURI = URI.createURI(PlatformLoaderUtils.CUSTOM_PLATFORM_PATHMAP + alias + ".platform");
 				} else if (importDeclaration instanceof LibraryImportDeclaration) {
-					importResourceAliasURI = URI.createURI(LibraryLoaderUtils.CUSTOM_LIBRARY_PATHMAP + alias);
+					importResourceAliasURI = URI.createURI(LibraryLoaderUtils.CUSTOM_LIBRARY_PATHMAP + alias + ".intent");
 				} else {
 					log.error(format("Cannot load the provided import, unknown import type {0}",
 							importDeclaration.eClass().getName()));
