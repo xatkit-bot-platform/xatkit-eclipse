@@ -38,7 +38,6 @@ import com.xatkit.common.LibraryImportDeclaration;
 import com.xatkit.common.PlatformImportDeclaration;
 import com.xatkit.execution.ExecutionModel;
 import com.xatkit.execution.ExecutionPackage;
-import com.xatkit.execution.util.ExecutionSwitch;
 import com.xatkit.intent.IntentPackage;
 import com.xatkit.intent.Library;
 import com.xatkit.metamodels.utils.LibraryLoaderUtils;

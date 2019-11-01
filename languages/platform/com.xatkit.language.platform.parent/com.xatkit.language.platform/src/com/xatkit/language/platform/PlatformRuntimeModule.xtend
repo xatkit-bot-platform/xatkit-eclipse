@@ -3,6 +3,7 @@
  */
 package com.xatkit.language.platform
 
+import com.xatkit.language.platform.generator.PlatformGenerator
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -12,4 +13,9 @@ class PlatformRuntimeModule extends AbstractPlatformRuntimeModule {
 	override bindILinkingService() {
 		return PlatformLinkingService
 	}
+	
+	override bindIGenerator() {
+		return PlatformGenerator
+	}
+	
 }

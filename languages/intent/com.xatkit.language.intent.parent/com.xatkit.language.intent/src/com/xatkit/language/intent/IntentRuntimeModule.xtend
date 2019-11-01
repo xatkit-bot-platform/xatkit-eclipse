@@ -3,9 +3,15 @@
  */
 package com.xatkit.language.intent
 
+import com.xatkit.language.intent.generator.IntentGenerator
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 class IntentRuntimeModule extends AbstractIntentRuntimeModule {
+	
+	override bindIGenerator() {
+		return IntentGenerator
+	}
+	
 }

@@ -7,6 +7,7 @@ import java.util.Collections
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
+import org.eclipse.emf.common.util.URI
 
 /**
  * Generates code from your model files on save.
@@ -17,7 +18,9 @@ class ExecutionGenerator implements IGenerator {
 
 	override doGenerate(Resource resource, IFileSystemAccess fsa) {
 		val uri = resource.URI
-		var rr = resource.resourceSet.createResource(uri.trimFileExtension.appendFileExtension("xmi"))
+		val URI xmiUri = URI.createURI(
+			uri.trimFileExtension.appendFileExtension("xmi").toString.replace("/src/", "/bin/execution/"))
+		var rr = resource.resourceSet.createResource(xmiUri)
 		/*
 		 * Clear the content of the resource, the output resource is created each time save is called, and may already 
 		 * contain elements from a previous save.
@@ -26,5 +29,5 @@ class ExecutionGenerator implements IGenerator {
 		rr.contents.addAll(resource.contents)
 		rr.save(Collections.emptyMap())
 	}
-	
+
 }
