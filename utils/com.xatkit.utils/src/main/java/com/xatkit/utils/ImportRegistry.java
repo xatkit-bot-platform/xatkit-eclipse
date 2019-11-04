@@ -160,6 +160,7 @@ public class ImportRegistry {
 
 	private Map<String, Library> internalLibraryAliases = new HashMap<>();
 
+	// Called by xatkit internals
 	public void internalRegisterAlias(String alias, PlatformDefinition platformDefinition) {
 		if (!rSet.getResources().contains(platformDefinition.eResource())) {
 			this.rSet.getResources().add(platformDefinition.eResource());
@@ -167,6 +168,7 @@ public class ImportRegistry {
 		this.internalPlatformAliases.put(alias, platformDefinition);
 	}
 
+	// Called by xatkit internals
 	public void internalRegisterAlias(String alias, Library library) {
 		if (!rSet.getResources().contains(library.eResource())) {
 			this.rSet.getResources().add(library.eResource());
