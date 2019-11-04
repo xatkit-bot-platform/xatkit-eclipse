@@ -10,6 +10,14 @@ import com.xatkit.language.intent.generator.IntentGenerator
  */
 class IntentRuntimeModule extends AbstractIntentRuntimeModule {
 	
+	override bindILinkingService() {
+		return IntentLinkingService
+	}
+	
+	override bindILinker() {
+		IntentLazyLinker
+	}
+	
 	override bindIGenerator() {
 		return IntentGenerator
 	}
