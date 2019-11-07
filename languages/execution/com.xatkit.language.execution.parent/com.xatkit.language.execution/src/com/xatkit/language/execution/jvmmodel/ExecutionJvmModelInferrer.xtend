@@ -5,12 +5,12 @@ package com.xatkit.language.execution.jvmmodel
 
 import com.google.inject.Inject
 import com.xatkit.execution.ExecutionModel
-import com.xatkit.utils.ImportRegistry
+import com.xatkit.metamodels.utils.RuntimeModel
+import com.xatkit.utils.XatkitImportHelper
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import com.xatkit.metamodels.utils.RuntimeModel
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -56,7 +56,7 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 		 * the previous syntax. Note the the generated methods do not contain any execution logic, and are placeholders 
 		 * that will be used by the interpreter to trigger the action computation.
 		 */
-		ImportRegistry.instance.getImportedPlatforms(element).forEach [ platform |
+		XatkitImportHelper.instance.getImportedPlatforms(element).forEach [ platform |
 			acceptor.accept(platform.toClass(platform.name)) [
 				((platform.extends?.actions ?: #[]) + platform.actions).forEach [ action |
 					members += action.toMethod(action.name, typeRef(Object)) [

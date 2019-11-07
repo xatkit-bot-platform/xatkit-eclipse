@@ -6,7 +6,7 @@ package com.xatkit.language.execution.ui.contentassist
 
 import com.xatkit.execution.ExecutionModel
 import com.xatkit.platform.PlatformDefinition
-import com.xatkit.utils.ImportRegistry
+import com.xatkit.utils.XatkitImportHelper
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
@@ -20,7 +20,7 @@ class ExecutionProposalProvider extends AbstractExecutionProposalProvider {
 
 	override completeExecutionModel_EventProviderDefinitions(EObject model, Assignment assignment,
 		ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		var platforms = ImportRegistry.getInstance.getImportedPlatforms(model as ExecutionModel)
+		var platforms = XatkitImportHelper.getInstance.getImportedPlatforms(model as ExecutionModel)
 		for (PlatformDefinition platform : platforms) {
 			platform.eventProviderDefinitions.map[i|i.name].forEach [ iName |
 				acceptor.accept(createCompletionProposal(platform.name + '.' + iName, context))
@@ -33,7 +33,7 @@ class ExecutionProposalProvider extends AbstractExecutionProposalProvider {
 		/*
 		 * Intents from libraries.
 		 */
-		var libraries = ImportRegistry.getInstance.getImportedLibraries(model.eContainer as ExecutionModel)
+		var libraries = XatkitImportHelper.getInstance.getImportedLibraries(model.eContainer as ExecutionModel)
 		libraries.map[m|m.eventDefinitions.map[e|e.name]].flatten.forEach [ eName |
 			acceptor.accept(createCompletionProposal(eName, context))
 		]

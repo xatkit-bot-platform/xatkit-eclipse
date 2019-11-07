@@ -65,7 +65,7 @@ Parameter returns Parameter:
 	{Parameter}
 	key=EString
 	(':'
-	type= JvmTypeReference)?
+	type=JvmTypeReference)?
 ;
 
 EString returns ecore::EString:

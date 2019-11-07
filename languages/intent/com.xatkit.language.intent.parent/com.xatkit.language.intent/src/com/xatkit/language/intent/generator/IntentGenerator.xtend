@@ -4,7 +4,6 @@
 package com.xatkit.language.intent.generator
 
 import com.xatkit.intent.Library
-import com.xatkit.utils.ImportRegistry
 import java.util.Collections
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
@@ -34,6 +33,5 @@ class IntentGenerator implements IGenerator {
 		 * Update the imports associated to this library (this allows to use the latest version of a library under 
 		 * development in an execution model)
 		 */
-		ImportRegistry.instance.updateImport(library)
 	}
 }

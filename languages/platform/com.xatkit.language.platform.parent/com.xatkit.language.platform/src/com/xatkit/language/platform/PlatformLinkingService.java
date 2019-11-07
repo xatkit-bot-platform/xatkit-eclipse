@@ -13,7 +13,7 @@ import org.eclipse.xtext.nodemodel.INode;
 
 import com.xatkit.platform.PlatformDefinition;
 import com.xatkit.platform.PlatformPackage;
-import com.xatkit.utils.ImportRegistry;
+import com.xatkit.utils.XatkitImportHelper;
 
 import static java.text.MessageFormat.format;
 
@@ -32,7 +32,7 @@ public class PlatformLinkingService extends DefaultLinkingService {
 			PlatformDefinition platformDefinition = (PlatformDefinition) context;
 			if (ref.equals(PlatformPackage.eINSTANCE.getPlatformDefinition_Extends())) {
 				log.info(format("Linking super-platforms of {0}", platformDefinition.getName()));
-				Collection<PlatformDefinition> importedPlatformDefinitions = ImportRegistry.getInstance()
+				Collection<PlatformDefinition> importedPlatformDefinitions = XatkitImportHelper.getInstance()
 						.getImportedPlatforms(platformDefinition);
 				log.info(format("Found {0} registered platforms", importedPlatformDefinitions.size()));
 				for(PlatformDefinition importedPlatform : importedPlatformDefinitions) {

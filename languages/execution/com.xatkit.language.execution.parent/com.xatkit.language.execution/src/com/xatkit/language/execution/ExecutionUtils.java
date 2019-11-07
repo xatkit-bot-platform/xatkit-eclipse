@@ -16,7 +16,7 @@ import com.xatkit.intent.EventDefinition;
 import com.xatkit.intent.Library;
 import com.xatkit.platform.EventProviderDefinition;
 import com.xatkit.platform.PlatformDefinition;
-import com.xatkit.utils.ImportRegistry;
+import com.xatkit.utils.XatkitImportHelper;
 
 /**
  * A set of utility methods to manipulate Execution models.
@@ -116,7 +116,7 @@ public class ExecutionUtils {
 	 */
 	public static Collection<EventDefinition> getEventDefinitionsFromImportedLibraries(ExecutionModel executionModel) {
 		List<EventDefinition> eventDefinitions = new ArrayList<>();
-		Collection<Library> libraries = ImportRegistry.getInstance().getImportedLibraries(executionModel);
+		Collection<Library> libraries = XatkitImportHelper.getInstance().getImportedLibraries(executionModel);
 		for (Library library : libraries) {
 			eventDefinitions.addAll(library.getEventDefinitions());
 		}
@@ -133,7 +133,7 @@ public class ExecutionUtils {
 	 */
 	public static Collection<EventDefinition> getEventDefinitionsFromImportedPlatforms(ExecutionModel executionModel) {
 		List<EventDefinition> eventDefinitions = new ArrayList<>();
-		Collection<PlatformDefinition> platformDefinitions = ImportRegistry.getInstance()
+		Collection<PlatformDefinition> platformDefinitions = XatkitImportHelper.getInstance()
 				.getImportedPlatforms(executionModel);
 		for (PlatformDefinition platformDefinition : platformDefinitions) {
 			for (EventProviderDefinition eventProviderDefinition : platformDefinition.getEventProviderDefinitions()) {
@@ -182,7 +182,7 @@ public class ExecutionUtils {
 	public static Collection<EventProviderDefinition> getEventProviderDefinitionsFromImportedPlatforms(
 			ExecutionModel executionModel) {
 		List<EventProviderDefinition> eventProviderDefinitions = new ArrayList<>();
-		Collection<PlatformDefinition> platformDefinitions = ImportRegistry.getInstance()
+		Collection<PlatformDefinition> platformDefinitions = XatkitImportHelper.getInstance()
 				.getImportedPlatforms(executionModel);
 		for (PlatformDefinition platformDefinition : platformDefinitions) {
 			eventProviderDefinitions.addAll(platformDefinition.getEventProviderDefinitions());

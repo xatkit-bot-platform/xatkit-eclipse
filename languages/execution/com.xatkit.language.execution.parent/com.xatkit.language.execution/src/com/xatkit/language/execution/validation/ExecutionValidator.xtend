@@ -5,11 +5,11 @@ package com.xatkit.language.execution.validation
 
 import com.xatkit.common.CommonPackage
 import com.xatkit.common.ImportDeclaration
-import com.xatkit.utils.ImportRegistry
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.validation.Check
 
 import static java.util.Objects.isNull
+import com.xatkit.utils.XatkitImportHelper
 
 /**
  * This class contains custom validation rules. 
@@ -20,11 +20,12 @@ class ExecutionValidator extends AbstractExecutionValidator {
 
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
-		val Resource importedResource = ImportRegistry.getInstance.getOrLoadImport(i)
-		if(isNull(importedResource)) {
+		val Resource importedResource = XatkitImportHelper.getInstance.getResourceFromImport(i)
+		if (isNull(importedResource)) {
 			error("Cannot resolve the import " + i.path, CommonPackage.Literals.IMPORT_DECLARATION__PATH)
 		}
 	}
+
 //	
 //	@Check
 //	def checkDuplicatedAliases(ImportDeclaration i) {
@@ -35,7 +36,6 @@ class ExecutionValidator extends AbstractExecutionValidator {
 //			}
 //		]
 //	}
-
 //	@Check
 //	def checkValidContextAccess(ContextAccess contextAccess) {
 //		val ExecutionModel executionModel = ExecutionUtils.getContainingExecutionModel(contextAccess)

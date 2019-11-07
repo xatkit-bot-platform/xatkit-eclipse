@@ -4,12 +4,11 @@
 package com.xatkit.language.platform.generator
 
 import com.xatkit.platform.PlatformDefinition
-import com.xatkit.utils.ImportRegistry
 import java.util.Collections
+import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
-import org.eclipse.emf.common.util.URI
 
 /**
  * Generates code from your model files on save.
@@ -34,7 +33,6 @@ class PlatformGenerator implements IGenerator {
 		 * Update the imports associated to this platform (this allows to use the latest version of a platform under 
 		 * development in an execution model)
 		 */
-		ImportRegistry.instance.updateImport(platform)
 	}
 
 }

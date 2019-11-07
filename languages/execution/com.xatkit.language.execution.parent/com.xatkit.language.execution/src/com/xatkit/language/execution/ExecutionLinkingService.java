@@ -24,7 +24,7 @@ import com.xatkit.execution.ExecutionRule;
 import com.xatkit.intent.EventDefinition;
 import com.xatkit.platform.EventProviderDefinition;
 import com.xatkit.platform.PlatformDefinition;
-import com.xatkit.utils.ImportRegistry;
+import com.xatkit.utils.XatkitImportHelper;
 
 public class ExecutionLinkingService extends DefaultLinkingService {
 
@@ -54,7 +54,7 @@ public class ExecutionLinkingService extends DefaultLinkingService {
 			if (nonNull(qualifiedName)) {
 				String platformName = qualifiedName.getQualifier();
 				String eventProviderName = qualifiedName.getLocalName();
-				PlatformDefinition platformDefinition = ImportRegistry.getInstance()
+				PlatformDefinition platformDefinition = XatkitImportHelper.getInstance()
 						.getImportedPlatform((ExecutionModel) context, platformName);
 				if (nonNull(platformDefinition)) {
 					EventProviderDefinition eventProviderDefinition = platformDefinition

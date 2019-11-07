@@ -4,7 +4,7 @@
 package com.xatkit.language.platform.ui.contentassist
 
 import com.xatkit.platform.PlatformDefinition
-import com.xatkit.utils.ImportRegistry
+import com.xatkit.utils.XatkitImportHelper
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
@@ -19,7 +19,7 @@ class PlatformProposalProvider extends AbstractPlatformProposalProvider {
 	override completePlatform_Extends(EObject model, Assignment assignment, ContentAssistContext context,
 		ICompletionProposalAcceptor acceptor) {
 			val PlatformDefinition platform = model as PlatformDefinition
-			val importedPlatforms = ImportRegistry.getInstance.getImportedPlatforms(platform)
+			val importedPlatforms = XatkitImportHelper.getInstance.getImportedPlatforms(platform)
 			importedPlatforms.filter[p | !p.name.equals(platform.name)].forEach[p | 
 				acceptor.accept(createCompletionProposal(p.name, context))
 			]
