@@ -3,6 +3,11 @@
  */
 package com.xatkit.language.execution
 
+import com.xatkit.language.execution.generator.ExecutionGenerator
+import com.xatkit.language.execution.scoping.ExecutionIdentifiableSimpleNameProvider
+import org.eclipse.xtext.generator.IGenerator
+import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
@@ -10,6 +15,14 @@ class ExecutionRuntimeModule extends AbstractExecutionRuntimeModule {
 	
 	override bindILinkingService() {
 		return ExecutionLinkingService
+	}
+	
+	override Class<? extends IGenerator> bindIGenerator() {
+		return ExecutionGenerator
+	}
+	
+	override Class<? extends IdentifiableSimpleNameProvider> bindIdentifiableSimpleNameProvider() {
+		return ExecutionIdentifiableSimpleNameProvider
 	}
 	
 }

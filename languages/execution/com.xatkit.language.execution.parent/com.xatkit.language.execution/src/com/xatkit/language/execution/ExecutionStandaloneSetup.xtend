@@ -3,6 +3,9 @@
  */
 package com.xatkit.language.execution
 
+import org.apache.log4j.Logger
+import org.eclipse.xtext.common.types.access.impl.DeclaredTypeFactory
+import org.apache.log4j.Level
 
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.

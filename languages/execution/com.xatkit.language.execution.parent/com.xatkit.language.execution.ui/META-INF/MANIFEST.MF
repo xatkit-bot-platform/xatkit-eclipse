@@ -19,10 +19,14 @@ Require-Bundle: com.xatkit.language.execution;bundle-version="2.1.1",
  org.eclipse.xtext.xbase.lib;bundle-version="2.15.0",
  com.xatkit.execution;bundle-version="1.0.1",
  com.xatkit.utils;bundle-version="2.1.1",
- com.xatkit.language.common.ui;bundle-version="2.1.1";visibility:=reexport
+ com.xatkit.language.common.ui;bundle-version="2.1.1";visibility:=reexport,
+ org.eclipse.xtext.common.types.ui,
+ org.eclipse.xtext.xbase.ui,
+ org.eclipse.jdt.debug.ui
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: com.xatkit.language.execution.ui.quickfix,
  com.xatkit.language.execution.ui.internal,
- com.xatkit.language.execution.ui.contentassist
+ com.xatkit.language.execution.ui.contentassist,
+ com.xatkit.language.execution.ui.editor
 Bundle-Activator: com.xatkit.language.execution.ui.internal.ExecutionActivator

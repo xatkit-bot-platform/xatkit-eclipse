@@ -7,7 +7,7 @@ import com.xatkit.common.CommonPackage
 import com.xatkit.common.ImportDeclaration
 import com.xatkit.platform.PlatformDefinition
 import com.xatkit.platform.PlatformPackage
-import com.xatkit.utils.ImportRegistry
+import com.xatkit.utils.XatkitImportHelper
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.validation.Check
 
@@ -23,7 +23,7 @@ class PlatformValidator extends AbstractPlatformValidator {
 
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
-		val Resource importedResource = ImportRegistry.getInstance.getOrLoadImport(i)
+		val Resource importedResource = XatkitImportHelper.getInstance.getResourceFromImport(i)
 		if(isNull(importedResource)) {
 			error("Cannot resolve the import " + i.path, CommonPackage.Literals.IMPORT_DECLARATION__PATH)
 		}

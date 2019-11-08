@@ -4,7 +4,6 @@
 package com.xatkit.language.common.tests
 
 import com.google.inject.Inject
-import com.xatkit.common.PropertyAccess
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -14,16 +13,16 @@ import org.junit.runner.RunWith
 @RunWith(XtextRunner)
 @InjectWith(CommonInjectorProvider)
 class CommonParsingTest {
-	@Inject
-	ParseHelper<PropertyAccess> parseHelper
+//	@Inject
+//	ParseHelper<PropertyAccess> parseHelper
 	
-	@Test
-	def void loadModel() {
+//	@Test
+//	def void loadModel() {
 //		val result = parseHelper.parse('''
 //			Hello Xtext!
 //		''')
 //		Assertions.assertNotNull(result)
 //		val errors = result.eResource.errors
 //		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
-	}
+//	}
 }

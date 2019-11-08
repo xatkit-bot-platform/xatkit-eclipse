@@ -4,6 +4,7 @@ import "com.xatkit.platform"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 import "com.xatkit.intent" as intent
 import "com.xatkit.common" as common
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvmTypes
 
 Platform returns PlatformDefinition:
 	{PlatformDefinition}
@@ -46,15 +47,26 @@ InputProviderDefinition returns InputProviderDefinition:
 	)?
 ;
 
+/**
+ * Return type is optional to ease support for previous platform versions. Object is inferred if there is no return type.
+ */
 Action returns ActionDefinition:
 	{ActionDefinition}
-	name=EString ('('parameters+=Parameter (',' parameters+=Parameter)*')')?;
+	name=EString ('('parameters+=Parameter (',' parameters+=Parameter)*')')?
+	(':'
+	returnType=JvmTypeReference)?
+;
 
 
-
+/**
+ * Parameter type is optional to ease support for previous platform versions. Object is inferred if there is no type.
+ */
 Parameter returns Parameter:
 	{Parameter}
-	key=EString;
+	key=EString
+	(':'
+	type=JvmTypeReference)?
+;
 
 EString returns ecore::EString:
 	STRING | ID('->'ID)*;
