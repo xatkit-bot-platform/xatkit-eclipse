@@ -8,6 +8,20 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## Unreleased
 
+### Added
+
+- *Platform* language now supports types for *Action* parameters and *Action* return types. These types are optional, and will be inferred as `Object` is no type is specified. Types must refer to JVM type (e.g. a type loaded from the classpath).
+
+### Changed
+
+- All the grammars now inherits from the *Xbase* grammar, this allows to integrate *Xbase* expressions in execution models.
+- Action invocation doesn't need to be prefixed with the  `action` keyword. **This change breaks the public API**: execution models containing the `action` keyword won't be valid anymore.
+- Refactored `ImportRegistry` and renamed it `XatkitImportHelper` to make it stateless and usable from both the runtime component and the eclipse plugins. The code was a mess, it should be a bit better now. **This change breaks the public API**.
+
+### Removed
+
+- Removed *common expressions* from the *common* grammar. The grammar now extends *Xbase* and doesn't need its own expression language. **This change breaks the public API**: execution models using the *common expression language* won't be valid anymore.
+
 ## [2.1.0] - 2019-10-10
 
 ### Changed
