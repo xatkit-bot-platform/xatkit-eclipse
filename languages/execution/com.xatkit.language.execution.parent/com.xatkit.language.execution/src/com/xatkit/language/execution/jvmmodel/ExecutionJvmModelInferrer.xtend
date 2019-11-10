@@ -59,7 +59,8 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 		XatkitImportHelper.instance.getImportedPlatforms(element).forEach [ platform |
 			acceptor.accept(platform.toClass(platform.name)) [
 				((platform.extends?.actions ?: #[]) + platform.actions).forEach [ action |
-					members += action.toMethod(action.name, typeRef(Object)) [
+					val returnType = action.returnType ?: typeRef(Object)
+					members += action.toMethod(action.name, returnType) [
 						/*
 						 * If the parameter type / return type is not set we assume it is Object. This allows to support
 						 * existing platforms without major refactoring.
@@ -67,7 +68,6 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 						action.parameters.forEach [ parameter |
 							parameters += parameter.toParameter(parameter.key, parameter.type ?: typeRef(Object))
 						]
-						returnType = action.returnType ?: typeRef(Object)
 						static = true
 						body = '''
 							// This is a mock class, it shouldn't be called
