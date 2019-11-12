@@ -11,6 +11,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 
 - *Platform* language now supports types for *Action* parameters and *Action* return types. These types are optional, and will be inferred as `Object` is no type is specified. Types must refer to JVM type (e.g. a type loaded from the classpath).
+- Optional `from <PlatformName>` clause in execution rule: this clause allows to filter events/intents based on the platform that produced them. This feature can be useful for bots interacting with multiple messaging platforms. This clause is optional: if it is not specified the engine will match the event regardless the platform that produced them. 
 
 ### Changed
 

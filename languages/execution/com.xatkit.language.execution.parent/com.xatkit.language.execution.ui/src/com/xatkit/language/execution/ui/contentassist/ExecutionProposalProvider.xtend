@@ -47,4 +47,9 @@ class ExecutionProposalProvider extends AbstractExecutionProposalProvider {
 		super.completeExecutionRule_Event(model, assignment, context, acceptor)
 	}
 	
+	override completeExecutionRule_FromPlatform(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		val platforms = XatkitImportHelper.getInstance.getImportedPlatforms(model.eContainer as ExecutionModel)
+		platforms.forEach[acceptor.accept(createCompletionProposal(it.name, context))]
+	}
+	
 }

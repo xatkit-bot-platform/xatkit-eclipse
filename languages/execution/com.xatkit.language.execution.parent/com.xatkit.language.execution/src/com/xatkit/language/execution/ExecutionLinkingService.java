@@ -72,28 +72,44 @@ public class ExecutionLinkingService extends DefaultLinkingService {
 
 	private List<EObject> getLinkedObjectsForExecutionRule(ExecutionRule context, EReference ref, INode node) {
 		if (ref.equals(ExecutionPackage.eINSTANCE.getExecutionRule_Event())) {
-			ExecutionModel executionModel = (ExecutionModel) context.eContainer();
-			/*
-			 * Trying to retrieve an Event from a loaded Library
-			 */
-			EventDefinition foundEvent = ExecutionUtils.getEventDefinitionFromImportedLibraries(executionModel,
-					node.getText());
-			if (isNull(foundEvent)) {
-				/*
-				 * Cannot retrieve the Event from a loaded Library, trying to retrieve it from a loaded Platform
-				 */
-				foundEvent = ExecutionUtils.getEventDefinitionFromImportedPlatforms(executionModel, node.getText());
-			}
-			if (nonNull(foundEvent)) {
-				return Arrays.asList(foundEvent);
-			} else {
-				/*
-				 * Cannot retrieve the Event from the loaded Libraries or Platforms
-				 */
-				return Collections.emptyList();
-			}
+			return getLinkedObjectsForExecutionRuleEvent(context, ref, node);
+		} else if(ref.equals(ExecutionPackage.eINSTANCE.getExecutionRule_FromPlatform())) {
+			return getLinkedObjectsForExecutionRuleFromPlatform(context, ref, node);
 		} else {
 			return super.getLinkedObjects(context, ref, node);
+		}
+	}
+	
+	private List<EObject> getLinkedObjectsForExecutionRuleEvent(ExecutionRule context, EReference ref, INode node) {
+		ExecutionModel executionModel = (ExecutionModel) context.eContainer();
+		/*
+		 * Trying to retrieve an Event from a loaded Library
+		 */
+		EventDefinition foundEvent = ExecutionUtils.getEventDefinitionFromImportedLibraries(executionModel,
+				node.getText());
+		if (isNull(foundEvent)) {
+			/*
+			 * Cannot retrieve the Event from a loaded Library, trying to retrieve it from a loaded Platform
+			 */
+			foundEvent = ExecutionUtils.getEventDefinitionFromImportedPlatforms(executionModel, node.getText());
+		}
+		if (nonNull(foundEvent)) {
+			return Arrays.asList(foundEvent);
+		} else {
+			/*
+			 * Cannot retrieve the Event from the loaded Libraries or Platforms
+			 */
+			return Collections.emptyList();
+		}
+	}
+	
+	private List<EObject> getLinkedObjectsForExecutionRuleFromPlatform(ExecutionRule context, EReference ref, INode node) {
+		ExecutionModel executionModel = (ExecutionModel) context.eContainer();
+		PlatformDefinition platformDefinition = XatkitImportHelper.getInstance().getImportedPlatform(executionModel, node.getText());
+		if(nonNull(platformDefinition)) {
+			return Arrays.asList(platformDefinition);
+		} else {
+			return Collections.emptyList();
 		}
 	}
 
