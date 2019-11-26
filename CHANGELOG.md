@@ -12,12 +12,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 - *Platform* language now supports types for *Action* parameters and *Action* return types. These types are optional, and will be inferred as `Object` is no type is specified. Types must refer to JVM type (e.g. a type loaded from the classpath).
 - Optional `from <PlatformName>` clause in execution rule: this clause allows to filter events/intents based on the platform that produced them. This feature can be useful for bots interacting with multiple messaging platforms. This clause is optional: if it is not specified the engine will match the event regardless the platform that produced them. 
+- *Empty Xatkit Project* wizard, accessible through `File > New > Project > Xatkit`. The wizard creates a Xatkit project containing `intent`, `execution`, and `properties` file examples describing a simple *Hello World* bot definition that can be run with Xatkit.
 
 ### Changed
 
 - All the grammars now inherits from the *Xbase* grammar, this allows to integrate *Xbase* expressions in execution models.
 - Action invocation doesn't need to be prefixed with the  `action` keyword. **This change breaks the public API**: execution models containing the `action` keyword won't be valid anymore.
 - Refactored `ImportRegistry` and renamed it `XatkitImportHelper` to make it stateless and usable from both the runtime component and the eclipse plugins. The code was a mess, it should be a bit better now. **This change breaks the public API**.
+- `intent`, `execution`, and `platform` files now have a dedicated icon.
 
 ### Removed
 
