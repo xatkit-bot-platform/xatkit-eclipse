@@ -41,6 +41,9 @@ Workflow {
 			formatter = {
 				generateStub = true
 			}
+			projectWizard = {
+				generate = true
+			}
 
 			serializer = {
 				generateStub = false
