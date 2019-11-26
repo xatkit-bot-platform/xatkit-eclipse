@@ -4,12 +4,13 @@
 	<extension
 		point="org.eclipse.ui.editors">
 		<editor
-			class="com.xatkit.language.intent.ui.IntentExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
-			contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-			default="true"
-			extensions="intent"
-			id="com.xatkit.language.intent.Intent"
-			name="Intent Editor">
+        class="com.xatkit.language.intent.ui.IntentExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+        contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+        default="true"
+        extensions="intent"
+        icon="icons/intent_icon.png"
+        id="com.xatkit.language.intent.Intent"
+        name="Intent Editor">
 		</editor>
 	</extension>
 	<extension
