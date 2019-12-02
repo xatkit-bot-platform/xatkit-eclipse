@@ -8,6 +8,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## Unreleased
 
+## [3.0.0] - 2019-12-01
+
 ### Added
 
 - *Platform* language now supports types for *Action* parameters and *Action* return types. These types are optional, and will be inferred as `Object` is no type is specified. Types must refer to JVM type (e.g. a type loaded from the classpath).
