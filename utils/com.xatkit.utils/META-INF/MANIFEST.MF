@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Utils
 Bundle-SymbolicName: com.xatkit.utils;singleton:=true
-Bundle-Version: 2.1.1.qualifier
+Bundle-Version: 3.0.0
 Bundle-Activator: com.xatkit.utils.Activator
 Require-Bundle: org.eclipse.core.runtime,
- com.xatkit.intent;bundle-version="1.0.0";visibility:=reexport,
- com.xatkit.platform;bundle-version="1.0.0";visibility:=reexport,
- com.xatkit.execution;bundle-version="1.0.0";visibility:=reexport,
+ com.xatkit.intent;bundle-version="2.0.0";visibility:=reexport,
+ com.xatkit.platform;bundle-version="2.0.0";visibility:=reexport,
+ com.xatkit.execution;bundle-version="2.0.0";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;bundle-version="2.15.0",
- com.xatkit.metamodels-utils;bundle-version="1.0.0",
+ com.xatkit.metamodels-utils;bundle-version="2.0.0",
  org.eclipse.core.resources;bundle-version="3.13.100"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: com.xatkit.utils
