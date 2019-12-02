@@ -64,7 +64,7 @@ class EmptyXatkitProject {
 			''')
 			addRequiredBundles(
 				#["org.eclipse.xtext.xbase.lib;bundle-version=\"2.15.0\"",
-					"com.xatkit.metamodels-utils;bundle-version=\"2.0.0\""])
+					"com.xatkit.metamodels-utils;bundle-version=\"2.0.1\""])
 		])
 	}
 }
