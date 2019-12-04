@@ -2,20 +2,20 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: com.xatkit.language.intent
 Bundle-Vendor: SOM Research Lab
-Bundle-Version: 2.1.1.qualifier
+Bundle-Version: 3.0.1.qualifier
 Bundle-SymbolicName: com.xatkit.language.intent; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.15.0",
  org.eclipse.xtext.xbase;bundle-version="2.15.0",
  org.eclipse.equinox.common;bundle-version="3.5.0",
- com.xatkit.intent;bundle-version="1.0.1",
+ com.xatkit.intent;bundle-version="2.0.1",
  org.eclipse.xtext.xbase.lib;bundle-version="2.15.0",
  org.antlr.runtime;bundle-version="[3.2.0,3.2.1)",
  org.eclipse.xtext.util;bundle-version="2.15.0",
  org.eclipse.xtend.lib;bundle-version="2.15.0",
  org.eclipse.core.runtime;bundle-version="3.13.0",
- com.xatkit.utils;bundle-version="2.1.1",
- com.xatkit.language.common;bundle-version="2.1.1";visibility:=reexport,
+ com.xatkit.utils;bundle-version="3.0.1",
+ com.xatkit.language.common;bundle-version="3.0.1";visibility:=reexport,
  org.eclipse.xtext.common.types,
  org.objectweb.asm;bundle-version="[6.2.1,6.3.0)";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

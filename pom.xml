@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>com.xatkit</groupId>
 		<artifactId>xatkit</artifactId>
-		<version>3.0.1-SNAPSHOT</version>
+		<version>4.0.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>eclipse</artifactId>
 	<packaging>pom</packaging>
 	<!-- The version is required to run tycho-versions -->
 	<!-- tycho-versions will remove the version after an update, put it back to ease the next release -->
-	<version>2.1.1-SNAPSHOT</version>
+	<version>3.0.1-SNAPSHOT</version>
 	
 	<name>Xatkit Eclipse Components</name>
 
