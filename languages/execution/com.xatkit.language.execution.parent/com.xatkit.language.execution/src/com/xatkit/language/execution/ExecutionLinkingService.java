@@ -32,13 +32,13 @@ public class ExecutionLinkingService extends DefaultLinkingService {
 	
 	public ExecutionLinkingService() {
 		super();
-		log.info(format("{0} started", this.getClass().getSimpleName()));
+		log.debug(format("{0} started", this.getClass().getSimpleName()));
 	}
 
 	@Override
 	public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) throws IllegalNodeException {
-		log.info(format("Linking context: {0}", context));
-		log.info(format("Linking reference: {0}", ref));
+		log.debug(format("{0} linking context: {1}", this.getClass().getSimpleName(), context));
+		log.debug(format("{0} linking reference: {1}", this.getClass().getSimpleName(), ref));
 		if (context instanceof ExecutionModel) {
 			return getLinkedObjectsForExecutionModel((ExecutionModel) context, ref, node);
 		} else if (context instanceof ExecutionRule) {

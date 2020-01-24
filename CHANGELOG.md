@@ -8,6 +8,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## Unreleased
 
+### Changed
+
+- Change log level of non-critical message related to DSL parsing and model loading. This reduces the amount of noise in Xatkit logs.
+
+### Fixed
+
+- [#23](https://github.com/xatkit-bot-platform/xatkit-eclipse/issues/23): *Most of model loading logs should be trace/debug*
+
 ## [3.0.0] - 2019-12-01
 
 ### Added

@@ -23,7 +23,7 @@ public class PlatformLinkingService extends DefaultLinkingService {
 	
 	public PlatformLinkingService() {
 		super();
-		log.info(format("{0} started", this.getClass().getSimpleName()));
+		log.debug(format("{0} started", this.getClass().getSimpleName()));
 	}
 
 	@Override
@@ -31,10 +31,10 @@ public class PlatformLinkingService extends DefaultLinkingService {
 		if (context instanceof PlatformDefinition) {
 			PlatformDefinition platformDefinition = (PlatformDefinition) context;
 			if (ref.equals(PlatformPackage.eINSTANCE.getPlatformDefinition_Extends())) {
-				log.info(format("Linking super-platforms of {0}", platformDefinition.getName()));
+				log.debug(format("{0} linking super-platforms of {1}", this.getClass().getSimpleName(), platformDefinition.getName()));
 				Collection<PlatformDefinition> importedPlatformDefinitions = XatkitImportHelper.getInstance()
 						.getImportedPlatforms(platformDefinition);
-				log.info(format("Found {0} registered platforms", importedPlatformDefinitions.size()));
+				log.debug(format("{0} found {1} registered platforms", this.getClass().getSimpleName(), importedPlatformDefinitions.size()));
 				for(PlatformDefinition importedPlatform : importedPlatformDefinitions) {
 					if(importedPlatform.getName().equals(node.getText())) {
 						return Arrays.asList(importedPlatform);

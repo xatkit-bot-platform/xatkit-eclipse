@@ -87,7 +87,7 @@ public class XatkitImportHelper {
 	 */
 	private static void incrementLoadCalls() {
 		FILE_LOADED_COUNT++;
-		log.info(format("# File loaded: {0}", FILE_LOADED_COUNT));
+		log.debug(format("# File loaded: {0}", FILE_LOADED_COUNT));
 	}
 
 	/**
@@ -563,7 +563,7 @@ public class XatkitImportHelper {
 			log.error("The loaded resource is empty");
 			return null;
 		}
-		log.info(format("Resource with URI {0} loaded", resource.getURI()));
+		log.debug(format("Resource with URI {0} loaded", resource.getURI()));
 		return resource;
 	}
 
@@ -606,7 +606,7 @@ public class XatkitImportHelper {
 	private void loadXatkitCore(ResourceSet rSet) {
 		if (rSet.getResources().stream()
 				.anyMatch(r -> r.getURI().toString().contains(PlatformLoaderUtils.CORE_PLATFORM_PATHMAP))) {
-			log.info("Xatkit core components already loaded");
+			log.debug("Xatkit core components already loaded");
 			return;
 		}
 		try {
@@ -661,7 +661,7 @@ public class XatkitImportHelper {
 									LibraryLoaderUtils.CORE_LIBRARY_PATHMAP + modelPath.getFileName().toString()));
 							modelResource.load(is, Collections.emptyMap());
 						}
-						log.info(format("Library resource {0} loaded (uri={1})", modelPath.getFileName(),
+						log.debug(format("Library resource {0} loaded (uri={1})", modelPath.getFileName(),
 								modelResource.getURI()));
 						is.close();
 					} catch (IOException e) {
@@ -711,7 +711,7 @@ public class XatkitImportHelper {
 									PlatformLoaderUtils.CORE_PLATFORM_PATHMAP + modelPath.getFileName().toString()));
 							modelResource.load(is, Collections.emptyMap());
 						}
-						log.info(format("Platform resource {0} loaded (uri={1})", modelPath.getFileName(),
+						log.debug(format("Platform resource {0} loaded (uri={1})", modelPath.getFileName(),
 								modelResource.getURI()));
 						is.close();
 						EcoreUtil.resolveAll(modelResource);
