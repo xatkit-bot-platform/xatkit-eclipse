@@ -52,7 +52,7 @@ LiteralTextFragment returns LiteralTextFragment:
 EventDefinition returns EventDefinition:
 	{EventDefinition}
 	'event' name=EString
-	(outContexts+=OutContextDefinition)?
+	(outContexts+=OutContextDefinition)*
 ;
 
 IntentDefinition returns IntentDefinition:

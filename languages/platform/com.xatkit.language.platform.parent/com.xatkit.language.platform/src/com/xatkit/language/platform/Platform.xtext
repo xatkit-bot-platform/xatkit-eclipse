@@ -32,7 +32,7 @@ EventProviderDefinition returns EventProviderDefinition:
 	'event' name=EString
 	'{'
 		(eventDefinitions+=EventDefinition)*
-		(outContexts+=OutContextDefinition)*
+//		(outContexts+=OutContextDefinition)*
 		
 	'}'
 ;
