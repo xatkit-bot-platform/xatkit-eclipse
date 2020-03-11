@@ -88,16 +88,9 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 		]
 		
 		
-		/*
-		 * TODO only iterate on used providers, not all the imported ones
-		 */
-		XatkitImportHelper.instance.getImportedPlatforms(element).forEach [ platform |
-			((platform.extends?.eventProviderDefinitions ?: #[]) + platform.eventProviderDefinitions).forEach[ provider |
-				provider.eventDefinitions.forEach[event |
-					acceptor.accept(event.toClass(event.name)) [
-						
-					]
-				]
+		element.eventProviderDefinitions.forEach[provider |
+			provider.eventDefinitions.forEach[event |
+				acceptor.accept(event.toClass(event.name))
 			]
 		]
 		/*
