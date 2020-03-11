@@ -117,6 +117,14 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			}
 		}
 	}
+	
+	@Check
+	def checkStateNameIsUnique(com.xatkit.execution.State s) {
+		val executionModel = ExecutionUtils.getContainingExecutionModel(s)
+		if(executionModel.states.filter[exState | exState.name == s.name].size > 1) {
+			error("State names must be unique", ExecutionPackage.Literals.STATE__NAME)
+		}
+	}
 
 	private def boolean isStringGet(XMemberFeatureCall f) {
 		return f.feature.simpleName == "get" && f.memberCallArguments.size == 1 &&
