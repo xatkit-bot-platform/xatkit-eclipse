@@ -19,6 +19,7 @@ import org.eclipse.xtext.xbase.XbasePackage
 import org.eclipse.xtext.EcoreUtil2
 import com.xatkit.execution.Transition
 import com.xatkit.execution.ExecutionPackage
+import com.xatkit.execution.ExecutionModel
 
 /**
  * This class contains custom validation rules. 
@@ -123,6 +124,21 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		val executionModel = ExecutionUtils.getContainingExecutionModel(s)
 		if (executionModel.states.filter[exState|exState.name == s.name].size > 1) {
 			error("State names must be unique", ExecutionPackage.Literals.STATE__NAME)
+		}
+	}
+
+	@Check
+	def checkInitStateExists(ExecutionModel m) {
+		if (m.states.filter[it.name == "Init"].empty) {
+			error("The execution model must contain an init state", ExecutionPackage.Literals.EXECUTION_MODEL__STATES)
+		}
+	}
+
+	@Check
+	def checkDefaultFallbackStateExists(ExecutionModel m) {
+		if (m.states.filter[it.name == "Default_Fallback"].empty) {
+			error("The execution model must contain a Default_Fallback state",
+				ExecutionPackage.Literals.EXECUTION_MODEL__STATES)
 		}
 	}
 
