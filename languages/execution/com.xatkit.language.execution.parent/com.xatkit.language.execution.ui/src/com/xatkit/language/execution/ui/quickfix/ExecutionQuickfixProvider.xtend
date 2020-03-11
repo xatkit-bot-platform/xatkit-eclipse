@@ -3,7 +3,15 @@
  */
 package com.xatkit.language.execution.ui.quickfix
 
+import com.xatkit.language.execution.validation.ExecutionValidator
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
+import org.eclipse.xtext.ui.editor.quickfix.Fix
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
+import org.eclipse.xtext.validation.Issue
+import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
+import com.xatkit.execution.State
 
 /**
  * Custom quickfixes.
@@ -12,13 +20,38 @@ import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
  */
 class ExecutionQuickfixProvider extends DefaultQuickfixProvider {
 
-//	@Fix(OrchestrationValidator.INVALID_NAME)
-//	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
-//		acceptor.accept(issue, 'Capitalize name', 'Capitalize the name.', 'upcase.png') [
-//			context |
-//			val xtextDocument = context.xtextDocument
-//			val firstLetter = xtextDocument.get(issue.offset, 1)
-//			xtextDocument.replace(issue.offset, 1, firstLetter.toUpperCase)
-//		]
-//	}
+	@Fix(ExecutionValidator.CUSTOM_TRANSITION_SIBLING_IS_WILDCARD)
+	def removeCustomTransition(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Remove custom transition', 'Remove the custom transition from the state', '', new ISemanticModification() {
+			
+			override apply(EObject element, IModificationContext context) throws Exception {
+				val containingState = element.eContainer as State
+				containingState.transitions.remove(element)
+			}
+		})
+	}
+	
+	@Fix(ExecutionValidator.CUSTOM_TRANSITION_SIBLING_IS_WILDCARD)
+	@Fix(ExecutionValidator.WILDCARD_TRANSITION_HAS_SIBLINGS)
+	def removeWildcardTransition(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Remove wildcard transition', 'Remove the wildcard transition from the state', '', new ISemanticModification() {
+			
+			override apply(EObject element, IModificationContext context) throws Exception {
+				val containingState = element.eContainer as State
+				containingState.transitions.removeIf[it.isIsWildcard]
+			}
+		})
+	}
+	
+	@Fix(ExecutionValidator.WILDCARD_TRANSITION_HAS_SIBLINGS)
+	def removeAllCustomTransitions(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Remove all custom transitions', 'Remove all the custom transitions from the state', '', new ISemanticModification() {
+			
+			override apply(EObject element, IModificationContext context) throws Exception {
+				val containingState = element.eContainer as State
+				containingState.transitions.removeIf[!it.isIsWildcard]
+			}
+		})
+	}
+
 }

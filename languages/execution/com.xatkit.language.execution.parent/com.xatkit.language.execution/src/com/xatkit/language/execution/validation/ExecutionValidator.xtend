@@ -28,6 +28,10 @@ import com.xatkit.execution.ExecutionModel
  */
 class ExecutionValidator extends AbstractExecutionValidator {
 
+	public static val String CUSTOM_TRANSITION_SIBLING_IS_WILDCARD = "custom.transition.sibling.is.wildcard"
+
+	public static val String WILDCARD_TRANSITION_HAS_SIBLINGS = "wildcard.transition.has.siblings"
+
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
 		val Resource importedResource = XatkitImportHelper.getInstance.getResourceFromImport(i)
@@ -103,7 +107,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			val state = t.eContainer as com.xatkit.execution.State
 			if (!state.transitions.filter[isIsWildcard].empty) {
 				error("Custom transitions are not allowed if a wildcard transition already exists",
-					ExecutionPackage.Literals.TRANSITION__CONDITION)
+					ExecutionPackage.Literals.TRANSITION__CONDITION, CUSTOM_TRANSITION_SIBLING_IS_WILDCARD)
 			}
 		}
 	}
@@ -114,7 +118,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			val state = t.eContainer as com.xatkit.execution.State
 			if (state.transitions.size > 1) {
 				error("A wildcard transition cannot be defined with custom transitions",
-					ExecutionPackage.Literals.TRANSITION__IS_WILDCARD)
+					ExecutionPackage.Literals.TRANSITION__IS_WILDCARD, WILDCARD_TRANSITION_HAS_SIBLINGS)
 			}
 		}
 	}
