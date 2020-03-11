@@ -17,6 +17,8 @@ import com.xatkit.language.execution.ExecutionUtils
 import org.eclipse.xtext.xbase.XStringLiteral
 import org.eclipse.xtext.xbase.XbasePackage
 import org.eclipse.xtext.EcoreUtil2
+import com.xatkit.execution.Transition
+import com.xatkit.execution.ExecutionPackage
 
 /**
  * This class contains custom validation rules. 
@@ -90,6 +92,28 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			if (putCallsWithSameKey.empty) {
 				warning("The session key " + getKey + " is not set in the execution model",
 					XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
+			}
+		}
+	}
+
+	@Check
+	def checkCustomTransitionSiblingIsNotWildcard(Transition t) {
+		if (!t.isIsWildcard) {
+			val state = t.eContainer as com.xatkit.execution.State
+			if (!state.transitions.filter[isIsWildcard].empty) {
+				error("Custom transitions are not allowed if a wildcard transition already exists",
+					ExecutionPackage.Literals.TRANSITION__CONDITION)
+			}
+		}
+	}
+
+	@Check
+	def checkWildcardTransitionHasNoSiblings(Transition t) {
+		if (t.isIsWildcard) {
+			val state = t.eContainer as com.xatkit.execution.State
+			if (state.transitions.size > 1) {
+				error("A wildcard transition cannot be defined with custom transitions",
+					ExecutionPackage.Literals.TRANSITION__IS_WILDCARD)
 			}
 		}
 	}
