@@ -12,6 +12,7 @@ import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import com.xatkit.execution.State
+import com.xatkit.execution.ExecutionPackage
 
 /**
  * Custom quickfixes.
@@ -50,6 +51,17 @@ class ExecutionQuickfixProvider extends DefaultQuickfixProvider {
 			override apply(EObject element, IModificationContext context) throws Exception {
 				val containingState = element.eContainer as State
 				containingState.transitions.removeIf[!it.isIsWildcard]
+			}
+		})
+	}
+	
+	@Fix(ExecutionValidator.FALLBACK_SHOULD_NOT_EXIST)
+	def removeFallback(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Remove Fallback', 'Remove the Fallback section from the state', '', new ISemanticModification() {
+			
+			override apply(EObject element, IModificationContext context) throws Exception {
+				val state = element as State
+				state.eUnset(ExecutionPackage.Literals.STATE__FALLBACK)
 			}
 		})
 	}

@@ -32,6 +32,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 
 	public static val String WILDCARD_TRANSITION_HAS_SIBLINGS = "wildcard.transition.has.siblings"
 
+	public static val String FALLBACK_SHOULD_NOT_EXIST = "fallback.should.not.exist"
+
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
 		val Resource importedResource = XatkitImportHelper.getInstance.getResourceFromImport(i)
@@ -136,7 +138,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		val containsWildcardTransition = s.transitions.filter[it.isIsWildcard].iterator.hasNext
 		if (containsWildcardTransition && s.fallback !== null) {
 			error("States with a wildcard transition cannot define a custom fallback",
-				ExecutionPackage.Literals.STATE__FALLBACK)
+				ExecutionPackage.Literals.STATE__FALLBACK, FALLBACK_SHOULD_NOT_EXIST)
 		}
 	}
 
@@ -144,11 +146,12 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	def checkFallbackStateDoesNotDefineFallback(com.xatkit.execution.State s) {
 		if (s.name == "Default_Fallback") {
 			if (s.fallback !== null) {
-				error("Default_Fallback state cannot define a fallback", ExecutionPackage.Literals.STATE__FALLBACK)
+				error("Default_Fallback state cannot define a fallback", ExecutionPackage.Literals.STATE__FALLBACK,
+					FALLBACK_SHOULD_NOT_EXIST)
 			}
 		}
 	}
-	
+
 	@Check
 	def checkInitStateExists(ExecutionModel m) {
 		if (m.states.filter[it.name == "Init"].empty) {
