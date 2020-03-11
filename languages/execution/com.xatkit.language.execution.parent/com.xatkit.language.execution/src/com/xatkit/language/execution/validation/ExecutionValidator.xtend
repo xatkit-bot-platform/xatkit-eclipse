@@ -43,7 +43,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 				val declaredContexts = ExecutionUtils.getEventDefinitionsFromImports(
 					ExecutionUtils.getContainingExecutionModel(f)).flatMap[outContexts].map[name].toList
 				if (!declaredContexts.contains(getKey)) {
-					warning("Cannot find context " + getKey + " from the imported libraries/platforms.",
+					warning("Cannot find context " + getKey + " from the imported libraries/platforms",
 						XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
 				}
 			}
