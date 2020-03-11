@@ -119,7 +119,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		if (t.isIsWildcard) {
 			val state = t.eContainer as com.xatkit.execution.State
 			if (state.transitions.size > 1) {
-				error("A wildcard transition cannot be defined with custom transitions",
+				error("A wildcard transition cannot be defined with other transitions",
 					ExecutionPackage.Literals.TRANSITION__IS_WILDCARD, WILDCARD_TRANSITION_HAS_SIBLINGS)
 			}
 		}
