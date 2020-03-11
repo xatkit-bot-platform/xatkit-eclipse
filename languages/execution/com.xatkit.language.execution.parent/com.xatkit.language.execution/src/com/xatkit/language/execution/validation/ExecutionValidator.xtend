@@ -16,6 +16,7 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import com.xatkit.language.execution.ExecutionUtils
 import org.eclipse.xtext.xbase.XStringLiteral
 import org.eclipse.xtext.xbase.XbasePackage
+import org.eclipse.xtext.EcoreUtil2
 
 /**
  * This class contains custom validation rules. 
@@ -46,30 +47,50 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			}
 		}
 	}
-	
+
 	@Check
 	def checkGetParameterOnContext(XMemberFeatureCall f) {
-		if(f.isStringGet) {
+		if (f.isStringGet) {
 			if (f.memberCallTarget instanceof XMemberFeatureCall) {
-					val memberFeatureCallTarget = f.memberCallTarget as XMemberFeatureCall
-					if (memberFeatureCallTarget.isStringGet && memberFeatureCallTarget.targetIsContext) {
-						/*
-						 * We are dealing with context.get.get here, we want to check that the parameter associated to the get key exists in the context.
-						 */
-						val getContextKey = (memberFeatureCallTarget.memberCallArguments.get(0) as XStringLiteral).value
-						val getParameterKey = (f.memberCallArguments.get(0) as XStringLiteral).value
-						if (ExecutionUtils.getEventDefinitionsFromImports(
-							ExecutionUtils.getContainingExecutionModel(f)).flatMap[outContexts].filter [ c |
+				val memberFeatureCallTarget = f.memberCallTarget as XMemberFeatureCall
+				if (memberFeatureCallTarget.isStringGet && memberFeatureCallTarget.targetIsContext) {
+					/*
+					 * We are dealing with context.get.get here, we want to check that the parameter associated to the get key exists in the context.
+					 */
+					val getContextKey = (memberFeatureCallTarget.memberCallArguments.get(0) as XStringLiteral).value
+					val getParameterKey = (f.memberCallArguments.get(0) as XStringLiteral).value
+					if (ExecutionUtils.getEventDefinitionsFromImports(ExecutionUtils.getContainingExecutionModel(f)).
+						flatMap[outContexts].filter [ c |
 							c.name == getContextKey
 						].flatMap[parameters].filter[p|p.name == getParameterKey].isEmpty) {
-							/*
-							 * Cannot find the parameter in the imported EventDefinition's contexts.
-							 */
-							warning("Cannot find the parameter " + getParameterKey + " in context " + getContextKey,
-								XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
-						}
+						/*
+						 * Cannot find the parameter in the imported EventDefinition's contexts.
+						 */
+						warning("Cannot find the parameter " + getParameterKey + " in context " + getContextKey,
+							XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
 					}
 				}
+			}
+		}
+	}
+
+	@Check
+	def checkGetSession(XMemberFeatureCall f) {
+		if (f.isStringGet && f.targetIsSession) {
+			val getKey = (f.memberCallArguments.get(0) as XStringLiteral).value
+			val executionModel = ExecutionUtils.getContainingExecutionModel(f)
+			val allMemberFeatureCalls = EcoreUtil2.eAllOfType(executionModel, XMemberFeatureCall)
+			val putCallsWithSameKey = allMemberFeatureCalls.filter [ fCall |
+				/*
+				 * Look for a session.put call with the same key
+				 */
+				fCall.isPutWithStringKey && fCall.targetIsSession &&
+					(fCall.memberCallArguments.get(0) as XStringLiteral).value == getKey
+			]
+			if (putCallsWithSameKey.empty) {
+				warning("The session key " + getKey + " is not set in the execution model",
+					XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
+			}
 		}
 	}
 
@@ -78,9 +99,19 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			f.memberCallArguments.get(0) instanceof XStringLiteral
 	}
 
+	private def boolean isPutWithStringKey(XMemberFeatureCall f) {
+		return f.feature.simpleName == "put" && f.memberCallArguments.size == 2 &&
+			f.memberCallArguments.get(0) instanceof XStringLiteral
+	}
+
 	private def boolean targetIsContext(XMemberFeatureCall f) {
 		return f.memberCallTarget instanceof XFeatureCall &&
 			(f.memberCallTarget as XFeatureCall).feature.simpleName == "context"
+	}
+
+	private def boolean targetIsSession(XMemberFeatureCall f) {
+		return f.memberCallTarget instanceof XFeatureCall &&
+			(f.memberCallTarget as XFeatureCall).feature.simpleName == "session"
 	}
 
 //	
