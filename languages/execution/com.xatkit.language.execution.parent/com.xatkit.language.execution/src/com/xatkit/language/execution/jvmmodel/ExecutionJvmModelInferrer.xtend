@@ -11,6 +11,7 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import com.xatkit.execution.State
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -77,17 +78,43 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 				]
 			]
 		]
+		
+		XatkitImportHelper.instance.getImportedLibraries(element).forEach [ library |
+			library.eventDefinitions.forEach[event |
+				acceptor.accept(event.toClass(event.name)) [
+					
+				]
+			]
+		]
+		
+		
+		/*
+		 * TODO only iterate on used providers, not all the imported ones
+		 */
+		XatkitImportHelper.instance.getImportedPlatforms(element).forEach [ platform |
+			((platform.extends?.eventProviderDefinitions ?: #[]) + platform.eventProviderDefinitions).forEach[ provider |
+				provider.eventDefinitions.forEach[event |
+					acceptor.accept(event.toClass(event.name)) [
+						
+					]
+				]
+			]
+		]
 		/*
 		 * Create the main class corresponding to the current execution model. This class contains methods for each 
-		 * execution rule, and extends the RuntimeModel that provides additional fields to access context, session, and 
+		 * state transition, and extends the RuntimeModel that provides additional fields to access context, session, and 
 		 * configuration.
 		 */
 		acceptor.accept(element.toClass(INFERRED_CLASS_NAME)) [
 			superTypes += typeRef(RuntimeModel)
-			element.executionRules.forEach [ rule |
-				members += rule.toMethod("executionRuleOn" + rule.event.name, typeRef(void)) [
-					body = rule
-				]
+			element.states.forEach[state |
+				var tCount = 0
+				for(t : state.transitions) {
+					members += t.toMethod("transition" + state.name + tCount, typeRef(Boolean)) [
+						body = t.condition
+					]
+					tCount++
+				}
 			]
 		]
 	}
