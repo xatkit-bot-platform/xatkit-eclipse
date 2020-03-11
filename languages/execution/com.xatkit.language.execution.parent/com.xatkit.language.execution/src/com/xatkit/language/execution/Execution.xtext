@@ -27,8 +27,8 @@ State returns State:
 		('Body' body=XBlockExpression )?
 		('Fallback' fallback=XBlockExpression )?
 		'Next' '{'
-			(transitions+=Transition
-			(transitions+=Transition)*)?
+			transitions+=Transition
+			(transitions+=Transition)*
 		'}'
 	'}'
 ;
