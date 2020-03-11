@@ -128,6 +128,24 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	}
 
 	@Check
+	def checkStateDoesNotDefineFallbackIfItContainsAWildcardTransition(com.xatkit.execution.State s) {
+		val containsWildcardTransition = s.transitions.filter[it.isIsWildcard].iterator.hasNext
+		if (containsWildcardTransition && s.fallback !== null) {
+			error("States with a wildcard transition cannot define a custom fallback",
+				ExecutionPackage.Literals.STATE__FALLBACK)
+		}
+	}
+
+	@Check
+	def checkFallbackStateDoesNotDefineFallback(com.xatkit.execution.State s) {
+		if (s.name == "Default_Fallback") {
+			if (s.fallback !== null) {
+				error("Default_Fallback state cannot define a fallback", ExecutionPackage.Literals.STATE__FALLBACK)
+			}
+		}
+	}
+	
+	@Check
 	def checkInitStateExists(ExecutionModel m) {
 		if (m.states.filter[it.name == "Init"].empty) {
 			error("The execution model must contain an init state", ExecutionPackage.Literals.EXECUTION_MODEL__STATES)
