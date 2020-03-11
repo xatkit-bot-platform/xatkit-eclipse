@@ -5,11 +5,17 @@ package com.xatkit.language.execution.validation
 
 import com.xatkit.common.CommonPackage
 import com.xatkit.common.ImportDeclaration
+import com.xatkit.utils.XatkitImportHelper
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.validation.Check
 
 import static java.util.Objects.isNull
-import com.xatkit.utils.XatkitImportHelper
+import org.eclipse.xtext.xbase.XMemberFeatureCall
+import org.eclipse.xtext.xbase.XFeatureCall
+import com.xatkit.language.execution.ExecutionUtils
+import org.eclipse.xtext.xbase.XStringLiteral
+import org.eclipse.xtext.xbase.XbasePackage
 
 /**
  * This class contains custom validation rules. 
@@ -24,6 +30,57 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		if (isNull(importedResource)) {
 			error("Cannot resolve the import " + i.path, CommonPackage.Literals.IMPORT_DECLARATION__PATH)
 		}
+	}
+
+	@Check
+	def checkGetContext(XMemberFeatureCall f) {
+		if (f.isStringGet) {
+			if (f.targetIsContext) {
+				val getKey = (f.memberCallArguments.get(0) as XStringLiteral).value
+				val declaredContexts = ExecutionUtils.getEventDefinitionsFromImports(
+					ExecutionUtils.getContainingExecutionModel(f)).flatMap[outContexts].map[name].toList
+				if (!declaredContexts.contains(getKey)) {
+					warning("Cannot find context " + getKey + " from the imported libraries/platforms.",
+						XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
+				}
+			}
+		}
+	}
+	
+	@Check
+	def checkGetParameterOnContext(XMemberFeatureCall f) {
+		if(f.isStringGet) {
+			if (f.memberCallTarget instanceof XMemberFeatureCall) {
+					val memberFeatureCallTarget = f.memberCallTarget as XMemberFeatureCall
+					if (memberFeatureCallTarget.isStringGet && memberFeatureCallTarget.targetIsContext) {
+						/*
+						 * We are dealing with context.get.get here, we want to check that the parameter associated to the get key exists in the context.
+						 */
+						val getContextKey = (memberFeatureCallTarget.memberCallArguments.get(0) as XStringLiteral).value
+						val getParameterKey = (f.memberCallArguments.get(0) as XStringLiteral).value
+						if (ExecutionUtils.getEventDefinitionsFromImports(
+							ExecutionUtils.getContainingExecutionModel(f)).flatMap[outContexts].filter [ c |
+							c.name == getContextKey
+						].flatMap[parameters].filter[p|p.name == getParameterKey].isEmpty) {
+							/*
+							 * Cannot find the parameter in the imported EventDefinition's contexts.
+							 */
+							warning("Cannot find the parameter " + getParameterKey + " in context " + getContextKey,
+								XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
+						}
+					}
+				}
+		}
+	}
+
+	private def boolean isStringGet(XMemberFeatureCall f) {
+		return f.feature.simpleName == "get" && f.memberCallArguments.size == 1 &&
+			f.memberCallArguments.get(0) instanceof XStringLiteral
+	}
+
+	private def boolean targetIsContext(XMemberFeatureCall f) {
+		return f.memberCallTarget instanceof XFeatureCall &&
+			(f.memberCallTarget as XFeatureCall).feature.simpleName == "context"
 	}
 
 //	
