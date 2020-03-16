@@ -42,6 +42,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 
 	public static val String FALLBACK_STATE_DOES_NOT_EXIST = "fallback.state.does.not.exist"
 
+	public static val String FALLBACK_DOES_NOT_HAVE_BODY = "fallback.does.not.have.body"
+
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
 		val Resource importedResource = XatkitImportHelper.getInstance.getResourceFromImport(i)
@@ -168,6 +170,16 @@ class ExecutionValidator extends AbstractExecutionValidator {
 					error("Default_Fallback state cannot define transitions",
 						ExecutionPackage.Literals.STATE__TRANSITIONS, i, TRANSITIONS_SHOULD_NOT_EXIST)
 				}
+			}
+		}
+	}
+
+	@Check
+	def checkDefaultFallbackContainsBody(com.xatkit.execution.State s) {
+		if (s.name == "Default_Fallback") {
+			if (s.body === null) {
+				warning("Default_Fallback state should have a non-empty body", ExecutionPackage.Literals.STATE__NAME,
+					FALLBACK_DOES_NOT_HAVE_BODY)
 			}
 		}
 	}
