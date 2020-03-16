@@ -36,6 +36,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 
 	public static val String TRANSITIONS_SHOULD_NOT_EXIST = "transitions.should.not.exist"
 
+	public static val String INIT_STATE_DOES_NOT_EXIST = "init.state.does.not.exist"
+
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
 		val Resource importedResource = XatkitImportHelper.getInstance.getResourceFromImport(i)
@@ -169,7 +171,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	@Check
 	def checkInitStateExists(ExecutionModel m) {
 		if (m.states.filter[it.name == "Init"].empty) {
-			error("The execution model must contain an init state", ExecutionPackage.Literals.EXECUTION_MODEL__STATES)
+			error("The execution model must contain an init state", ExecutionPackage.Literals.EXECUTION_MODEL__STATES,
+				INIT_STATE_DOES_NOT_EXIST)
 		}
 	}
 

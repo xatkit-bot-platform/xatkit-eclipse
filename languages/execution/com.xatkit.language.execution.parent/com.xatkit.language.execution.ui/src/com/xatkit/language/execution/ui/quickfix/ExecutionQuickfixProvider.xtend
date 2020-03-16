@@ -15,6 +15,8 @@ import com.xatkit.execution.State
 import com.xatkit.execution.ExecutionPackage
 import com.xatkit.execution.Transition
 import org.eclipse.xtext.ui.editor.model.edit.IModification
+import com.xatkit.execution.ExecutionModel
+import com.xatkit.execution.ExecutionFactory
 
 /**
  * Custom quickfixes.
@@ -91,6 +93,21 @@ class ExecutionQuickfixProvider extends DefaultQuickfixProvider {
 				override apply(EObject element, IModificationContext context) throws Exception {
 					val state = element as State
 					state.transitions.clear()
+				}
+			}
+		)
+	}
+	
+	@Fix(ExecutionValidator.INIT_STATE_DOES_NOT_EXIST)
+	def addInitState(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Create Init State', 'Create the Init state', '',
+			new ISemanticModification() {
+				
+				override apply(EObject element, IModificationContext context) throws Exception {
+					val executionModel = element as ExecutionModel
+					val initState = ExecutionFactory.eINSTANCE.createState
+					initState.name = "Init"
+					executionModel.states.add(0, initState)
 				}
 			}
 		)

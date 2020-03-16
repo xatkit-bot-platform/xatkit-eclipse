@@ -8,12 +8,24 @@ import com.xatkit.execution.ExecutionModel
 import com.xatkit.language.execution.services.ExecutionGrammarAccess
 import org.eclipse.xtext.formatting2.AbstractFormatter2
 import org.eclipse.xtext.formatting2.IFormattableDocument
+import com.xatkit.execution.State
+import com.xatkit.execution.ExecutionPackage
+import org.eclipse.xtext.xbase.formatting2.XbaseFormatter
+import com.xatkit.execution.Transition
 
-class ExecutionFormatter extends AbstractFormatter2 {
+class ExecutionFormatter extends XbaseFormatter {
 	
 	@Inject extension ExecutionGrammarAccess
 
 	def dispatch void format(ExecutionModel executionModel, extension IFormattableDocument document) {
+		for(state : executionModel.states) {
+			state.format
+		}
+	}
+	
+	def dispatch void format(State s, extension IFormattableDocument document) {
+		s.regionFor.feature(ExecutionPackage.Literals.STATE__NAME).prepend[newLine]
+		s.regionFor.keyword("{").append[newLine]
 	}
 	
 }
