@@ -37,7 +37,9 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	public static val String TRANSITIONS_SHOULD_NOT_EXIST = "transitions.should.not.exist"
 
 	public static val String INIT_STATE_DOES_NOT_EXIST = "init.state.does.not.exist"
-	
+
+	public static val String INIT_STATE_DOES_NOT_HAVE_TRANSITION = "init.state.does.not.have.transition"
+
 	public static val String FALLBACK_STATE_DOES_NOT_EXIST = "fallback.state.does.not.exist"
 
 	@Check
@@ -175,6 +177,16 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		if (m.states.filter[it.name == "Init"].empty) {
 			error("The execution model must contain an init state", ExecutionPackage.Literals.EXECUTION_MODEL__STATES,
 				INIT_STATE_DOES_NOT_EXIST)
+		}
+	}
+
+	@Check
+	def checkInitStateContainsATransition(com.xatkit.execution.State s) {
+		if (s.name == "Init") {
+			if (s.transitions.isNullOrEmpty) {
+				warning("Init state should contain at least one transition", ExecutionPackage.Literals.STATE__NAME,
+					INIT_STATE_DOES_NOT_HAVE_TRANSITION)
+			}
 		}
 	}
 
