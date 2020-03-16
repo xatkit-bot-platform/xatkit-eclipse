@@ -112,5 +112,21 @@ class ExecutionQuickfixProvider extends DefaultQuickfixProvider {
 			}
 		)
 	}
+	
+	@Fix(ExecutionValidator.FALLBACK_STATE_DOES_NOT_EXIST)
+	def addFallbackState(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Create Default_Fallback State', 'Create the default fallback state', '',
+			new ISemanticModification() {
+				
+				override apply(EObject element, IModificationContext context) throws Exception {
+					val executionModel = element as ExecutionModel
+					val fallbackState = ExecutionFactory.eINSTANCE.createState
+					fallbackState.name = "Default_Fallback"
+					executionModel.states.add(fallbackState)
+				}
+				
+			}
+		)
+	}
 
 }

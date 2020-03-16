@@ -37,6 +37,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	public static val String TRANSITIONS_SHOULD_NOT_EXIST = "transitions.should.not.exist"
 
 	public static val String INIT_STATE_DOES_NOT_EXIST = "init.state.does.not.exist"
+	
+	public static val String FALLBACK_STATE_DOES_NOT_EXIST = "fallback.state.does.not.exist"
 
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
@@ -180,7 +182,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	def checkDefaultFallbackStateExists(ExecutionModel m) {
 		if (m.states.filter[it.name == "Default_Fallback"].empty) {
 			error("The execution model must contain a Default_Fallback state",
-				ExecutionPackage.Literals.EXECUTION_MODEL__STATES)
+				ExecutionPackage.Literals.EXECUTION_MODEL__STATES, FALLBACK_STATE_DOES_NOT_EXIST)
 		}
 	}
 
