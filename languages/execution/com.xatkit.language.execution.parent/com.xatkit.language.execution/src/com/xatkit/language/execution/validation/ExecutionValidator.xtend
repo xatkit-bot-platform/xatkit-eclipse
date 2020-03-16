@@ -34,6 +34,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 
 	public static val String FALLBACK_SHOULD_NOT_EXIST = "fallback.should.not.exist"
 
+	public static val String TRANSITIONS_SHOULD_NOT_EXIST = "transitions.should.not.exist"
+
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
 		val Resource importedResource = XatkitImportHelper.getInstance.getResourceFromImport(i)
@@ -148,6 +150,18 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			if (s.fallback !== null) {
 				error("Default_Fallback state cannot define a fallback", ExecutionPackage.Literals.STATE__FALLBACK,
 					FALLBACK_SHOULD_NOT_EXIST)
+			}
+		}
+	}
+
+	@Check
+	def checkFallbackStateDoesNotDefineNext(com.xatkit.execution.State s) {
+		if (s.name == "Default_Fallback") {
+			if (!s.transitions.isNullOrEmpty) {
+				for (var i = 0; i < s.transitions.length; i++) {
+					error("Default_Fallback state cannot define transitions",
+						ExecutionPackage.Literals.STATE__TRANSITIONS, i, TRANSITIONS_SHOULD_NOT_EXIST)
+				}
 			}
 		}
 	}

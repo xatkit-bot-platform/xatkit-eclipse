@@ -14,6 +14,7 @@ import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import com.xatkit.execution.State
 import com.xatkit.execution.ExecutionPackage
 import com.xatkit.execution.Transition
+import org.eclipse.xtext.ui.editor.model.edit.IModification
 
 /**
  * Custom quickfixes.
@@ -80,6 +81,19 @@ class ExecutionQuickfixProvider extends DefaultQuickfixProvider {
 					state.eUnset(ExecutionPackage.Literals.STATE__FALLBACK)
 				}
 			})
+	}
+	
+	@Fix(ExecutionValidator.TRANSITIONS_SHOULD_NOT_EXIST)
+	def removeTransitions(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Remove Transitions', 'Remove all the transitions from the state', '',
+			new ISemanticModification() {
+				
+				override apply(EObject element, IModificationContext context) throws Exception {
+					val state = element as State
+					state.transitions.clear()
+				}
+			}
+		)
 	}
 
 }
