@@ -187,8 +187,10 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	@Check
 	def checkInitStateExists(ExecutionModel m) {
 		if (m.states.filter[it.name == "Init"].empty) {
-			error("The execution model must contain an init state", ExecutionPackage.Literals.EXECUTION_MODEL__STATES,
-				INIT_STATE_DOES_NOT_EXIST)
+			for (var i = 0; i < m.states.length; i++) {
+				error("The execution model must contain an init state",
+					ExecutionPackage.Literals.EXECUTION_MODEL__STATES, i, INIT_STATE_DOES_NOT_EXIST)
+			}
 		}
 	}
 
@@ -205,8 +207,10 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	@Check
 	def checkDefaultFallbackStateExists(ExecutionModel m) {
 		if (m.states.filter[it.name == "Default_Fallback"].empty) {
-			error("The execution model must contain a Default_Fallback state",
-				ExecutionPackage.Literals.EXECUTION_MODEL__STATES, FALLBACK_STATE_DOES_NOT_EXIST)
+			for (var i = 0; i < m.states.length; i++) {
+				error("The execution model must contain a Default_Fallback state",
+					ExecutionPackage.Literals.EXECUTION_MODEL__STATES, i, FALLBACK_STATE_DOES_NOT_EXIST)
+			}
 		}
 	}
 
