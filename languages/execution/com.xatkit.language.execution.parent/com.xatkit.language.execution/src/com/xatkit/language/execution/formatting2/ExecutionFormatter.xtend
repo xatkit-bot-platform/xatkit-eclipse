@@ -12,6 +12,8 @@ import com.xatkit.execution.State
 import com.xatkit.execution.ExecutionPackage
 import org.eclipse.xtext.xbase.formatting2.XbaseFormatter
 import com.xatkit.execution.Transition
+import org.eclipse.xtext.formatting2.internal.AbstractTextReplacer
+import org.eclipse.xtext.formatting2.ITextReplacerContext
 
 class ExecutionFormatter extends XbaseFormatter {
 	
@@ -26,6 +28,10 @@ class ExecutionFormatter extends XbaseFormatter {
 	def dispatch void format(State s, extension IFormattableDocument document) {
 		s.regionFor.feature(ExecutionPackage.Literals.STATE__NAME).prepend[newLine]
 		s.regionFor.keyword("{").append[newLine]
+		s.regionFor.keyword("Body").prepend[newLine]
+		s.regionFor.keyword("Fallback").prepend[newLine]
+		s.regionFor.keyword("Next").prepend[newLine]
 	}
+	
 	
 }
