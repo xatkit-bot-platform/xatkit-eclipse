@@ -108,6 +108,12 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 					]
 					tCount++
 				}
+				members += state.body.toMethod("body" + state.name, typeRef(void)) [
+					body = state.body
+				]
+				members += state.fallback.toMethod("fallback" + state.name, typeRef(void)) [
+					body = state.fallback
+				]
 			]
 		]
 	}
