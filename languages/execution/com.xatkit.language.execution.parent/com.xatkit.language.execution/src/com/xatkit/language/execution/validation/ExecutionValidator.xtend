@@ -20,6 +20,7 @@ import org.eclipse.xtext.EcoreUtil2
 import com.xatkit.execution.Transition
 import com.xatkit.execution.ExecutionPackage
 import com.xatkit.execution.ExecutionModel
+import java.util.List
 
 /**
  * This class contains custom validation rules. 
@@ -43,6 +44,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	public static val String FALLBACK_STATE_DOES_NOT_EXIST = "fallback.state.does.not.exist"
 
 	public static val String FALLBACK_DOES_NOT_HAVE_BODY = "fallback.does.not.have.body"
+
+	public static val String TRANSITION_IS_INFINITE_LOOP = "transition.is.infinite.loop"
 
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
@@ -214,6 +217,20 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		}
 	}
 
+	@Check
+	def checkTransitionIsNotInfiniteLoop(Transition t) {
+		if (t.isIsWildcard) {
+			if (t.eContainer instanceof com.xatkit.execution.State) {
+				val containingState = t.eContainer as com.xatkit.execution.State
+				if (t.state == containingState) {
+					val index = containingState.transitions.indexOf(t)
+					error("Infinite loop on state " + t.state.name, containingState,
+						ExecutionPackage.Literals.STATE__TRANSITIONS, index, TRANSITION_IS_INFINITE_LOOP)
+				}
+			}
+		}
+	}
+
 	private def boolean isStringGet(XMemberFeatureCall f) {
 		return f.feature.simpleName == "get" && f.memberCallArguments.size == 1 &&
 			f.memberCallArguments.get(0) instanceof XStringLiteral
@@ -233,5 +250,4 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		return f.memberCallTarget instanceof XFeatureCall &&
 			(f.memberCallTarget as XFeatureCall).feature.simpleName == "session"
 	}
-
 }
