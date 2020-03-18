@@ -152,9 +152,10 @@ class ExecutionValidator extends AbstractExecutionValidator {
 
 	@Check
 	def checkStateIsReachable(com.xatkit.execution.State s) {
-		if(s.name != "Default_Fallback") {
+		if(s.name != "Default_Fallback" && s.name != "Init") {
 			/*
 			 * Default Fallback should be unreachable, we don't want to go in this state explicitly.
+			 * Init does not need to be reachable, it is executed when initializing the state machine anyway.
 			 */
 			val executionModel = s.eContainer as ExecutionModel
 			val transitionsToState = executionModel.states.flatMap[it.transitions].filter [ t |
