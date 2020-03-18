@@ -47,6 +47,7 @@ class ExecutionQuickfixProvider extends DefaultQuickfixProvider {
 		)
 	}
 
+	@Fix(ExecutionValidator.TRANSITION_TO_DEFAULT_FALLBACK)
 	@Fix(ExecutionValidator.CUSTOM_TRANSITION_SIBLING_IS_WILDCARD)
 	def removeCustomTransition(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, 'Remove custom transition', 'Remove the custom transition from the state', '',

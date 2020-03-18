@@ -47,6 +47,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 
 	public static val String TRANSITION_IS_INFINITE_LOOP = "transition.is.infinite.loop"
 
+	public static val String TRANSITION_TO_DEFAULT_FALLBACK = "transition.to.default.fallback"
+
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
 		val Resource importedResource = XatkitImportHelper.getInstance.getResourceFromImport(i)
@@ -135,6 +137,14 @@ class ExecutionValidator extends AbstractExecutionValidator {
 				error("A wildcard transition cannot be defined with other transitions",
 					ExecutionPackage.Literals.TRANSITION__IS_WILDCARD, WILDCARD_TRANSITION_HAS_SIBLINGS)
 			}
+		}
+	}
+
+	@Check
+	def checkTransitionDoesNotTargetDefaultFallback(Transition t) {
+		if (t.state.name == "Default_Fallback") {
+			error("A transition cannot target the Default_Fallback state", ExecutionPackage.Literals.TRANSITION__STATE,
+				TRANSITION_TO_DEFAULT_FALLBACK)
 		}
 	}
 
