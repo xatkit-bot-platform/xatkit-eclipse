@@ -7,6 +7,7 @@ import com.xatkit.language.execution.generator.ExecutionGenerator
 import com.xatkit.language.execution.scoping.ExecutionIdentifiableSimpleNameProvider
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider
+import org.eclipse.xtext.linking.impl.LinkingDiagnosticMessageProvider
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -24,5 +25,10 @@ class ExecutionRuntimeModule extends AbstractExecutionRuntimeModule {
 	override Class<? extends IdentifiableSimpleNameProvider> bindIdentifiableSimpleNameProvider() {
 		return ExecutionIdentifiableSimpleNameProvider
 	}
+	
+	override Class<? extends LinkingDiagnosticMessageProvider> bindILinkingDiagnosticMessageProvider() {
+		return ExecutionLinkingDiagnosticMessageProvider
+	}
+	
 	
 }

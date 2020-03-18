@@ -17,6 +17,7 @@ import com.xatkit.execution.Transition
 import org.eclipse.xtext.ui.editor.model.edit.IModification
 import com.xatkit.execution.ExecutionModel
 import com.xatkit.execution.ExecutionFactory
+import com.xatkit.language.execution.ExecutionLinkingDiagnosticMessageProvider
 
 /**
  * Custom quickfixes.
@@ -24,6 +25,27 @@ import com.xatkit.execution.ExecutionFactory
  * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#quick-fixes
  */
 class ExecutionQuickfixProvider extends DefaultQuickfixProvider {
+
+	@Fix(ExecutionLinkingDiagnosticMessageProvider.STATE_NOT_RESOLVED)
+	def createState(Issue issue, IssueResolutionAcceptor acceptor) {
+		super.createLinkingIssueResolutions(issue, acceptor);
+		val String missingState = issue.data?.get(0) ?: ""
+		acceptor.accept(issue, 'Create State ' + missingState, 'Create a new State ' + missingState, '',
+			new ISemanticModification() {
+				
+				override apply(EObject element, IModificationContext context) throws Exception {
+					if(element instanceof Transition) {
+						val parentState = element.eContainer as State
+						val executionModel = parentState.eContainer as ExecutionModel
+						val parentStateIndex = executionModel.states.indexOf(parentState)
+						val newState = ExecutionFactory.eINSTANCE.createState
+						newState.name = missingState
+						executionModel.states.add(parentStateIndex + 1, newState)
+					}
+				}
+			}
+		)
+	}
 
 	@Fix(ExecutionValidator.CUSTOM_TRANSITION_SIBLING_IS_WILDCARD)
 	def removeCustomTransition(Issue issue, IssueResolutionAcceptor acceptor) {
