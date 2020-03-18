@@ -57,24 +57,14 @@ EventDefinition returns EventDefinition:
 
 IntentDefinition returns IntentDefinition:
 	{IntentDefinition}
-	'intent' name=EString ('follows' follows=[IntentDefinition|ID])?
+	'intent' name=EString
 	'{'
-		(inContexts+=InContextDefinition)*
 		'inputs' '{'
 			trainingSentences+=EString (trainingSentences+=EString)*
 		'}'
 		(outContexts+=OutContextDefinition)*
-		('default answers' '{'
-			defaultAnswers+=EString (defaultAnswers+=EString)*
-		'}'
-		)?
 	'}'
 	;
-
-InContextDefinition returns Context:
-	{Context}
-	RequiresContext name=EString //('(' 'lifeSpan' '='lifeSpan=INT ')')?
-;
 
 OutContextDefinition returns Context:
 	{Context}
@@ -172,10 +162,6 @@ EString returns ecore::EString:
  * Instructions containing multiple keywords are moved to dedicated rules to enable multiple keyword completion (see 
  * https://blogs.itemis.com/en/xtext-hint-content-assist-for-multiple-consecutive-keywords)
  */
-
-RequiresContext:
-	'requires' 'context'
-;
 
 CreatesContext:
 	'creates' 'context'

@@ -20,9 +20,6 @@ class IntentFormatter extends AbstractFormatter2 {
 		for (Context context : intentDefinition.getOutContexts()) {
 			context.format;
 		}
-		for (Context context : intentDefinition.getInContexts()) {
-			context.format;
-		}
 	}
 
 	def dispatch void format(Context context, extension IFormattableDocument document) {
