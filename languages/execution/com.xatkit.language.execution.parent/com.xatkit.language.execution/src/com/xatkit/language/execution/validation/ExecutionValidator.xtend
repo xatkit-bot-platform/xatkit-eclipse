@@ -48,6 +48,8 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	public static val String TRANSITION_IS_INFINITE_LOOP = "transition.is.infinite.loop"
 
 	public static val String TRANSITION_TO_DEFAULT_FALLBACK = "transition.to.default.fallback"
+	
+	public static val String STATE_IS_UNREACHABLE = "state.is.unreachable"
 
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
@@ -145,6 +147,23 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		if (t.state.name == "Default_Fallback") {
 			error("A transition cannot target the Default_Fallback state", ExecutionPackage.Literals.TRANSITION__STATE,
 				TRANSITION_TO_DEFAULT_FALLBACK)
+		}
+	}
+
+	@Check
+	def checkStateIsReachable(com.xatkit.execution.State s) {
+		if(s.name != "Default_Fallback") {
+			/*
+			 * Default Fallback should be unreachable, we don't want to go in this state explicitly.
+			 */
+			val executionModel = s.eContainer as ExecutionModel
+			val transitionsToState = executionModel.states.flatMap[it.transitions].filter [ t |
+				t.eContainer !== s && t.state == s
+			]
+			if (transitionsToState.isEmpty) {
+				warning("State " + s.name + " is unreachable (can't find any transition targeting" + s.name + ")",
+					ExecutionPackage.Literals.STATE__NAME, STATE_IS_UNREACHABLE)
+			}
 		}
 	}
 
