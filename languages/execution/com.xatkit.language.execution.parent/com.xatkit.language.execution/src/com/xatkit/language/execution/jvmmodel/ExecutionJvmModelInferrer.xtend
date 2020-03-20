@@ -12,6 +12,8 @@ import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import com.xatkit.execution.State
+import com.xatkit.intent.EventDefinition
+import org.eclipse.xtext.common.types.JvmVisibility
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -82,6 +84,14 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 		XatkitImportHelper.instance.getImportedLibraries(element).forEach [ library |
 			library.eventDefinitions.forEach[event |
 				acceptor.accept(event.toClass(event.name)) [
+					superTypes += typeRef(EventDefinition)
+					members += event.toField("base", typeRef(EventDefinition)) [
+						visibility = JvmVisibility.PUBLIC
+						constant = true
+						constantValue = event
+						static = true
+					]
+					
 					
 				]
 			]
@@ -90,7 +100,15 @@ class ExecutionJvmModelInferrer extends AbstractModelInferrer {
 		
 		element.eventProviderDefinitions.forEach[provider |
 			provider.eventDefinitions.forEach[event |
-				acceptor.accept(event.toClass(event.name))
+				acceptor.accept(event.toClass(event.name)) [
+					superTypes += typeRef(EventDefinition)
+					members += event.toField("base", typeRef(EventDefinition)) [
+						visibility = JvmVisibility.PUBLIC
+						constant = true
+						constantValue = event
+						static = true
+					]
+				]
 			]
 		]
 		/*

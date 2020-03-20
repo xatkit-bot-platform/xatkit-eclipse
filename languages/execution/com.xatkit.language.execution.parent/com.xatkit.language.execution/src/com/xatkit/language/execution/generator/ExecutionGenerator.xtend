@@ -25,9 +25,13 @@ class ExecutionGenerator implements IGenerator {
 		 * Clear the content of the resource, the output resource is created each time save is called, and may already 
 		 * contain elements from a previous save.
 		 */
-		rr.contents.clear
-		rr.contents.addAll(resource.contents)
-		rr.save(Collections.emptyMap())
+//		rr.contents.clear
+//		rr.contents.addAll(resource.contents)
+//		rr.save(Collections.emptyMap())
+
+		/*
+		 * Disabled the generator, it cannot serialize the referred intent definition (static field)
+		 */
 	}
 
 }
