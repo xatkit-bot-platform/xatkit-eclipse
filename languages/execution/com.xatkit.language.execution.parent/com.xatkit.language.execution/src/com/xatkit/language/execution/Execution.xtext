@@ -25,11 +25,11 @@ State returns State:
 	{State}
 	name=ID '{'
 		('Body' body=XBlockExpression )?
-		('Fallback' fallback=XBlockExpression )?
 		('Next' '{'
 			transitions+=Transition
 			(transitions+=Transition)*
 		'}')?
+		('Fallback' fallback=XBlockExpression )?
 	'}'
 ;
 
