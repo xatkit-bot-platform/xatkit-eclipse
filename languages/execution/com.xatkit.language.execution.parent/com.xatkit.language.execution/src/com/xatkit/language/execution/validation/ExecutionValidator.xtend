@@ -184,6 +184,14 @@ class ExecutionValidator extends AbstractExecutionValidator {
 				ExecutionPackage.Literals.STATE__FALLBACK, FALLBACK_SHOULD_NOT_EXIST)
 		}
 	}
+	
+	@Check
+	def checkStateContainsAtLeastOneTransition(com.xatkit.execution.State s) {
+		if (s.transitions.isNullOrEmpty) {
+			error("A state should contain at least one transition", ExecutionPackage.Literals.STATE__NAME,
+				INIT_STATE_DOES_NOT_HAVE_TRANSITION)
+		}
+	}
 
 	@Check
 	def checkFallbackStateDoesNotDefineFallback(com.xatkit.execution.State s) {
@@ -226,17 +234,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			}
 		}
 	}
-
-	@Check
-	def checkInitStateContainsATransition(com.xatkit.execution.State s) {
-		if (s.name == "Init") {
-			if (s.transitions.isNullOrEmpty) {
-				warning("Init state should contain at least one transition", ExecutionPackage.Literals.STATE__NAME,
-					INIT_STATE_DOES_NOT_HAVE_TRANSITION)
-			}
-		}
-	}
-
+	
 	@Check
 	def checkDefaultFallbackStateExists(ExecutionModel m) {
 		if (m.states.filter[it.name == "Default_Fallback"].empty) {
