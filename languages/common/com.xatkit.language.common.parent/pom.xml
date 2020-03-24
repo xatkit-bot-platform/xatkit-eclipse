@@ -16,7 +16,6 @@
 
 	<modules>
 		<module>com.xatkit.language.common</module>
-		<module>com.xatkit.language.common.ide</module>
 		<module>com.xatkit.language.common.ui</module>
  		<module>com.xatkit.language.common.tests</module>
 		<module>com.xatkit.language.common.ui.tests</module>

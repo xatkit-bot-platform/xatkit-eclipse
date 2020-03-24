@@ -21,6 +21,9 @@ Workflow {
 				eclipsePluginTest = {
 					enabled = true
 				}
+				genericIde = {
+					name = "com.xatkit.language.intent.ui"
+				}
 				createEclipseMetaData = true
 			}
 			code = {

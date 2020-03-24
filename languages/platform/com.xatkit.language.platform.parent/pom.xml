@@ -16,7 +16,6 @@
 
 	<modules>
 		<module>com.xatkit.language.platform</module>
-		<module>com.xatkit.language.platform.ide</module>
 		<module>com.xatkit.language.platform.ui</module>
 		<module>com.xatkit.language.platform.tests</module>
 		<module>com.xatkit.language.platform.ui.tests</module>

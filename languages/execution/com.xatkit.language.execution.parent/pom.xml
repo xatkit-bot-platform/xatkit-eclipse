@@ -16,7 +16,6 @@
 
 	<modules>
 		<module>com.xatkit.language.execution</module>
-		<module>com.xatkit.language.execution.ide</module>
 		<module>com.xatkit.language.execution.ui</module>
 		<module>com.xatkit.language.execution.tests</module>
 		<module>com.xatkit.language.execution.ui.tests</module>

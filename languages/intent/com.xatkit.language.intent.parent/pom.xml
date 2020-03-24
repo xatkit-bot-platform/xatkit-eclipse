@@ -16,7 +16,6 @@
 
 	<modules>
 		<module>com.xatkit.language.intent</module>
-		<module>com.xatkit.language.intent.ide</module>
 		<module>com.xatkit.language.intent.ui</module>
 		<module>com.xatkit.language.intent.tests</module>
 		<module>com.xatkit.language.intent.ui.tests</module>
