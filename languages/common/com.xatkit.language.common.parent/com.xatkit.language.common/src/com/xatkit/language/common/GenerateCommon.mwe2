@@ -21,6 +21,9 @@ Workflow {
 				eclipsePluginTest = {
 					enabled = true
 				}
+				genericIde = {
+					name = "com.xatkit.language.common.ui"
+				}
 				createEclipseMetaData = true
 			}
 			code = {
