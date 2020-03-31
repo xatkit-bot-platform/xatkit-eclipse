@@ -187,7 +187,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	
 	@Check
 	def checkStateContainsAtLeastOneTransition(com.xatkit.execution.State s) {
-		if (s.transitions.isNullOrEmpty) {
+		if (s.name != "Default_Fallback" && s.transitions.isNullOrEmpty) {
 			error("A state should contain at least one transition", ExecutionPackage.Literals.STATE__NAME,
 				INIT_STATE_DOES_NOT_HAVE_TRANSITION)
 		}
