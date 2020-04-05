@@ -41,12 +41,26 @@ class EmptyXatkitProject {
 				
 				use provider ReactPlatform.ReactIntentProvider
 				
-				on intent HelloWorld do
-					ReactPlatform.Reply(context.get("Hello").get("helloTo") + " says hello to you!")
-					
-				on intent Default_Fallback_Intent do
-					ReactPlatform.Reply("Sorry I didn't get it")
-					
+				Init {
+					Next {
+						intent == HelloWorld --> HandleHelloWorld
+					}
+				}
+				
+				HandleHelloWorld {
+					Body {
+						ReactPlatform.Reply(context.get("Hello").get("helloTo") + " says hello to you!")
+					}
+					Next {
+						_ --> Init
+					}
+				}
+				
+				Default_Fallback {
+					Body {
+						ReactPlatform.Reply("Sorry I didn't get it")
+					}
+				}
 			''')
 			addFile('''«projectInfo.projectName».properties''', '''
 				# Execution file containing the logic of the bot
