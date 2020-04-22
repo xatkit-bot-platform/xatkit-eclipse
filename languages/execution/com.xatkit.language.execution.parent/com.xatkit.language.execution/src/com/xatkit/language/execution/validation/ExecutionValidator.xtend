@@ -48,7 +48,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	public static val String TRANSITION_IS_INFINITE_LOOP = "transition.is.infinite.loop"
 
 	public static val String TRANSITION_TO_DEFAULT_FALLBACK = "transition.to.default.fallback"
-	
+
 	public static val String STATE_IS_UNREACHABLE = "state.is.unreachable"
 
 	@Check
@@ -152,7 +152,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 
 	@Check
 	def checkStateIsReachable(com.xatkit.execution.State s) {
-		if(s.name != "Default_Fallback" && s.name != "Init") {
+		if (s.name != "Default_Fallback" && s.name != "Init") {
 			/*
 			 * Default Fallback should be unreachable, we don't want to go in this state explicitly.
 			 * Init does not need to be reachable, it is executed when initializing the state machine anyway.
@@ -184,7 +184,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 				ExecutionPackage.Literals.STATE__FALLBACK, FALLBACK_SHOULD_NOT_EXIST)
 		}
 	}
-	
+
 	@Check
 	def checkStateContainsAtLeastOneTransition(com.xatkit.execution.State s) {
 		if (s.name != "Default_Fallback" && s.transitions.isNullOrEmpty) {
@@ -234,7 +234,7 @@ class ExecutionValidator extends AbstractExecutionValidator {
 			}
 		}
 	}
-	
+
 	@Check
 	def checkDefaultFallbackStateExists(ExecutionModel m) {
 		if (m.states.filter[it.name == "Default_Fallback"].empty) {
@@ -270,8 +270,16 @@ class ExecutionValidator extends AbstractExecutionValidator {
 	}
 
 	private def boolean targetIsContext(XMemberFeatureCall f) {
-		return f.memberCallTarget instanceof XFeatureCall &&
-			(f.memberCallTarget as XFeatureCall).feature.simpleName == "context"
+		/*
+		 * Check for both "context" and "getContext", the latter is used to access the context of a received event/intent.
+		 */
+		if(f.memberCallTarget instanceof XFeatureCall) {
+			return (f.memberCallTarget as XFeatureCall).feature.simpleName == "context"
+		} else if(f.memberCallTarget instanceof XMemberFeatureCall) {
+			return (f.memberCallTarget as XMemberFeatureCall).feature.simpleName == "getContext"
+		} else {
+			return false
+		}
 	}
 
 	private def boolean targetIsSession(XMemberFeatureCall f) {
