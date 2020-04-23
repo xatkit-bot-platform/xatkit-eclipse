@@ -5,20 +5,33 @@ package com.xatkit.language.execution.formatting2
 
 import com.google.inject.Inject
 import com.xatkit.execution.ExecutionModel
-import com.xatkit.execution.ExecutionRule
 import com.xatkit.language.execution.services.ExecutionGrammarAccess
 import org.eclipse.xtext.formatting2.AbstractFormatter2
 import org.eclipse.xtext.formatting2.IFormattableDocument
+import com.xatkit.execution.State
+import com.xatkit.execution.ExecutionPackage
+import org.eclipse.xtext.xbase.formatting2.XbaseFormatter
+import com.xatkit.execution.Transition
+import org.eclipse.xtext.formatting2.internal.AbstractTextReplacer
+import org.eclipse.xtext.formatting2.ITextReplacerContext
 
-class ExecutionFormatter extends AbstractFormatter2 {
+class ExecutionFormatter extends XbaseFormatter {
 	
 	@Inject extension ExecutionGrammarAccess
 
 	def dispatch void format(ExecutionModel executionModel, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
-		for (ExecutionRule executionRule : executionModel.executionRules) {
-			executionRule.format;
+		for(state : executionModel.states) {
+			state.format
 		}
 	}
+	
+	def dispatch void format(State s, extension IFormattableDocument document) {
+		s.regionFor.feature(ExecutionPackage.Literals.STATE__NAME).prepend[newLine]
+		s.regionFor.keyword("{").append[newLine]
+		s.regionFor.keyword("Body").prepend[newLine]
+		s.regionFor.keyword("Fallback").prepend[newLine]
+		s.regionFor.keyword("Next").prepend[newLine]
+	}
+	
 	
 }

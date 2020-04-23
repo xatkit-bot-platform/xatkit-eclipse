@@ -1,11 +1,8 @@
 package com.xatkit.language.execution;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static java.text.MessageFormat.format;
+import static java.util.Objects.nonNull;
 
-
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +17,6 @@ import org.eclipse.xtext.nodemodel.INode;
 
 import com.xatkit.execution.ExecutionModel;
 import com.xatkit.execution.ExecutionPackage;
-import com.xatkit.execution.ExecutionRule;
-import com.xatkit.intent.EventDefinition;
 import com.xatkit.platform.EventProviderDefinition;
 import com.xatkit.platform.PlatformDefinition;
 import com.xatkit.utils.XatkitImportHelper;
@@ -41,8 +36,6 @@ public class ExecutionLinkingService extends DefaultLinkingService {
 		log.debug(format("{0} linking reference: {1}", this.getClass().getSimpleName(), ref));
 		if (context instanceof ExecutionModel) {
 			return getLinkedObjectsForExecutionModel((ExecutionModel) context, ref, node);
-		} else if (context instanceof ExecutionRule) {
-			return getLinkedObjectsForExecutionRule((ExecutionRule) context, ref, node);
 		} else {
 			return super.getLinkedObjects(context, ref, node);
 		}
@@ -67,49 +60,6 @@ public class ExecutionLinkingService extends DefaultLinkingService {
 			return Collections.emptyList();
 		} else {
 			return super.getLinkedObjects(context, ref, node);
-		}
-	}
-
-	private List<EObject> getLinkedObjectsForExecutionRule(ExecutionRule context, EReference ref, INode node) {
-		if (ref.equals(ExecutionPackage.eINSTANCE.getExecutionRule_Event())) {
-			return getLinkedObjectsForExecutionRuleEvent(context, ref, node);
-		} else if(ref.equals(ExecutionPackage.eINSTANCE.getExecutionRule_FromPlatform())) {
-			return getLinkedObjectsForExecutionRuleFromPlatform(context, ref, node);
-		} else {
-			return super.getLinkedObjects(context, ref, node);
-		}
-	}
-	
-	private List<EObject> getLinkedObjectsForExecutionRuleEvent(ExecutionRule context, EReference ref, INode node) {
-		ExecutionModel executionModel = (ExecutionModel) context.eContainer();
-		/*
-		 * Trying to retrieve an Event from a loaded Library
-		 */
-		EventDefinition foundEvent = ExecutionUtils.getEventDefinitionFromImportedLibraries(executionModel,
-				node.getText());
-		if (isNull(foundEvent)) {
-			/*
-			 * Cannot retrieve the Event from a loaded Library, trying to retrieve it from a loaded Platform
-			 */
-			foundEvent = ExecutionUtils.getEventDefinitionFromImportedPlatforms(executionModel, node.getText());
-		}
-		if (nonNull(foundEvent)) {
-			return Arrays.asList(foundEvent);
-		} else {
-			/*
-			 * Cannot retrieve the Event from the loaded Libraries or Platforms
-			 */
-			return Collections.emptyList();
-		}
-	}
-	
-	private List<EObject> getLinkedObjectsForExecutionRuleFromPlatform(ExecutionRule context, EReference ref, INode node) {
-		ExecutionModel executionModel = (ExecutionModel) context.eContainer();
-		PlatformDefinition platformDefinition = XatkitImportHelper.getInstance().getImportedPlatform(executionModel, node.getText());
-		if(nonNull(platformDefinition)) {
-			return Arrays.asList(platformDefinition);
-		} else {
-			return Collections.emptyList();
 		}
 	}
 

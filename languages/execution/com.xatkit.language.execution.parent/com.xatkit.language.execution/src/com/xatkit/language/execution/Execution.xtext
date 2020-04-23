@@ -13,14 +13,35 @@ ExecutionModel returns ExecutionModel:
 	{ExecutionModel}
 	(imports+=ImportDeclaration (imports+=ImportDeclaration)*)?
 	('use' 'provider' eventProviderDefinitions+=[platform::EventProviderDefinition|QualifiedName])*
-	(executionRules+=ExecutionRule
-	(executionRules+=ExecutionRule)*)?;
+	(states+=State
+	(states+=State)*)?
+;
+	
 
-ExecutionRule returns ExecutionRule:
-	{ExecutionRule}
-	('on intent' | 'on event') 
-	event=[intent::EventDefinition|ID] 
-	('from' fromPlatform=[platform::PlatformDefinition | ID])?
-	'do'
-	(expressions+=(XExpressionOrVarDeclaration) ';'?)*;
+/*
+ * Note: no need to specify the '{' and '}' for body and fallback reference, it is already done in XBlockExpression
+ */
+State returns State:
+	{State}
+	name=ID '{'
+		('Body' body=XBlockExpression )?
+		('Next' '{'
+			transitions+=Transition
+			(transitions+=Transition)*
+		'}')?
+		('Fallback' fallback=XBlockExpression )?
+	'}'
+;
+
+/*
+ * TODO ensure that a transition is either a wildcard or a condition
+ */
+Transition returns Transition:
+	{Transition}
+	(isWildcard?='_')?
+	(condition=XOrExpression)?
+	'-->'
+	state=[State]
+	(isEndOfPath?='endOfPath')?
+;
 	

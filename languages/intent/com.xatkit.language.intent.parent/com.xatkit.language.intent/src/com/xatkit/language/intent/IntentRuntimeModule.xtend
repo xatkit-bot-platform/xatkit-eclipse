@@ -14,10 +14,6 @@ class IntentRuntimeModule extends AbstractIntentRuntimeModule {
 		return IntentLinkingService
 	}
 	
-	override bindILinker() {
-		IntentLazyLinker
-	}
-	
 	override bindIGenerator() {
 		return IntentGenerator
 	}

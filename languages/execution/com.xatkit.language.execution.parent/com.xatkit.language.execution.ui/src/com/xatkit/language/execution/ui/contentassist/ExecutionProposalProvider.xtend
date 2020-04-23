@@ -28,28 +28,4 @@ class ExecutionProposalProvider extends AbstractExecutionProposalProvider {
 		}
 	}
 	
-	override completeExecutionRule_Event(EObject model, Assignment assignment, ContentAssistContext context,
-		ICompletionProposalAcceptor acceptor) {
-		/*
-		 * Intents from libraries.
-		 */
-		var libraries = XatkitImportHelper.getInstance.getImportedLibraries(model.eContainer as ExecutionModel)
-		libraries.map[m|m.eventDefinitions.map[e|e.name]].flatten.forEach [ eName |
-			acceptor.accept(createCompletionProposal(eName, context))
-		]
-		/*
-		 * Intents stored in used EventProviders
-		 */
-		var executionModel = model.eContainer as ExecutionModel
-		executionModel.eventProviderDefinitions.map[e|e.eventDefinitions.map[ed|ed.name]].flatten.forEach [ edName |
-			acceptor.accept(createCompletionProposal(edName, context))
-		];
-		super.completeExecutionRule_Event(model, assignment, context, acceptor)
-	}
-	
-	override completeExecutionRule_FromPlatform(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		val platforms = XatkitImportHelper.getInstance.getImportedPlatforms(model.eContainer as ExecutionModel)
-		platforms.forEach[acceptor.accept(createCompletionProposal(it.name, context))]
-	}
-	
 }

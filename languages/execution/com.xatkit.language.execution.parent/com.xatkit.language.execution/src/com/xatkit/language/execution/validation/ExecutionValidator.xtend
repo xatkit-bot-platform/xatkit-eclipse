@@ -5,11 +5,22 @@ package com.xatkit.language.execution.validation
 
 import com.xatkit.common.CommonPackage
 import com.xatkit.common.ImportDeclaration
+import com.xatkit.utils.XatkitImportHelper
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.validation.Check
 
 import static java.util.Objects.isNull
-import com.xatkit.utils.XatkitImportHelper
+import org.eclipse.xtext.xbase.XMemberFeatureCall
+import org.eclipse.xtext.xbase.XFeatureCall
+import com.xatkit.language.execution.ExecutionUtils
+import org.eclipse.xtext.xbase.XStringLiteral
+import org.eclipse.xtext.xbase.XbasePackage
+import org.eclipse.xtext.EcoreUtil2
+import com.xatkit.execution.Transition
+import com.xatkit.execution.ExecutionPackage
+import com.xatkit.execution.ExecutionModel
+import java.util.List
 
 /**
  * This class contains custom validation rules. 
@@ -17,6 +28,28 @@ import com.xatkit.utils.XatkitImportHelper
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class ExecutionValidator extends AbstractExecutionValidator {
+
+	public static val String CUSTOM_TRANSITION_SIBLING_IS_WILDCARD = "custom.transition.sibling.is.wildcard"
+
+	public static val String WILDCARD_TRANSITION_HAS_SIBLINGS = "wildcard.transition.has.siblings"
+
+	public static val String FALLBACK_SHOULD_NOT_EXIST = "fallback.should.not.exist"
+
+	public static val String TRANSITIONS_SHOULD_NOT_EXIST = "transitions.should.not.exist"
+
+	public static val String INIT_STATE_DOES_NOT_EXIST = "init.state.does.not.exist"
+
+	public static val String INIT_STATE_DOES_NOT_HAVE_TRANSITION = "init.state.does.not.have.transition"
+
+	public static val String FALLBACK_STATE_DOES_NOT_EXIST = "fallback.state.does.not.exist"
+
+	public static val String FALLBACK_DOES_NOT_HAVE_BODY = "fallback.does.not.have.body"
+
+	public static val String TRANSITION_IS_INFINITE_LOOP = "transition.is.infinite.loop"
+
+	public static val String TRANSITION_TO_DEFAULT_FALLBACK = "transition.to.default.fallback"
+
+	public static val String STATE_IS_UNREACHABLE = "state.is.unreachable"
 
 	@Check
 	def checkImportDefinition(ImportDeclaration i) {
@@ -26,50 +59,231 @@ class ExecutionValidator extends AbstractExecutionValidator {
 		}
 	}
 
-//	
-//	@Check
-//	def checkDuplicatedAliases(ImportDeclaration i) {
-//		val ExecutionModel executionModel = ExecutionUtils.getContainingExecutionModel(i)
-//		executionModel.imports.forEach[executionModelImport | 
-//			if(!executionModelImport.path.equals(i.path) && executionModelImport.alias.equals(i.alias)) {
-//				error("Duplicated alias " + i.alias, CommonPackage.Literals.IMPORT_DECLARATION__ALIAS)
-//			}
-//		]
-//	}
-//	@Check
-//	def checkValidContextAccess(ContextAccess contextAccess) {
-//		val ExecutionModel executionModel = ExecutionUtils.getContainingExecutionModel(contextAccess)
-//		var boolean found = ExecutionUtils.getOutContextsFromImports(executionModel).map[name].toSet.contains(
-//			contextAccess.contextName)
-//		if (!found) {
-//			println("The context " + contextAccess.contextName + " is undefined")
-//			error("The context " + contextAccess.contextName + " is undefined",
-//				CommonPackage.Literals.CONTEXT_ACCESS__CONTEXT_NAME)
-//		}
-//	}
-//
-//	@Check
-//	def checkValidContextParameterAccess(OperationCall operationCall) {
-//		if (operationCall.source instanceof ContextAccess && operationCall.name.equals("get")) {
-//			if (operationCall.args.size == 1) {
-//				if (operationCall.args.get(0) instanceof StringLiteral) {
-//					val ContextAccess contextAccess = operationCall.source as ContextAccess
-//					val String arg = (operationCall.args.get(0) as StringLiteral).value
-//					val ExecutionModel executionModel = ExecutionUtils.getContainingExecutionModel(operationCall)
-//					var boolean found = ExecutionUtils.getOutContextsFromImports(executionModel).filter [
-//						name.equals(contextAccess.contextName)
-//					].map [parameters.map[name]].flatten.toSet.contains(arg)
-//					if (!found) {
-//						error("Parameter " + arg + " is not defined in context " + contextAccess.contextName,
-//							CommonPackage.Literals.OPERATION_CALL__ARGS)
-//					}
-//				} else {
-//					// do nothing, it may be a variable holding a name
-//				}
-//			} else {
-//				error("The method get on a stored context accepts a single element of type String",
-//					CommonPackage.Literals.OPERATION_CALL__ARGS)
-//			}
-//		}
-//	}
+	@Check
+	def checkGetContext(XMemberFeatureCall f) {
+		if (f.isStringGet) {
+			if (f.targetIsContext) {
+				val getKey = (f.memberCallArguments.get(0) as XStringLiteral).value
+				val declaredContexts = ExecutionUtils.getEventDefinitionsFromImports(
+					ExecutionUtils.getContainingExecutionModel(f)).flatMap[outContexts].map[name].toList
+				if (!declaredContexts.contains(getKey)) {
+					warning("Cannot find context " + getKey + " from the imported libraries/platforms",
+						XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
+				}
+			}
+		}
+	}
+
+	@Check
+	def checkGetParameterOnContext(XMemberFeatureCall f) {
+		if (f.isStringGet) {
+			if (f.memberCallTarget instanceof XMemberFeatureCall) {
+				val memberFeatureCallTarget = f.memberCallTarget as XMemberFeatureCall
+				if (memberFeatureCallTarget.isStringGet && memberFeatureCallTarget.targetIsContext) {
+					/*
+					 * We are dealing with context.get.get here, we want to check that the parameter associated to the get key exists in the context.
+					 */
+					val getContextKey = (memberFeatureCallTarget.memberCallArguments.get(0) as XStringLiteral).value
+					val getParameterKey = (f.memberCallArguments.get(0) as XStringLiteral).value
+					if (ExecutionUtils.getEventDefinitionsFromImports(ExecutionUtils.getContainingExecutionModel(f)).
+						flatMap[outContexts].filter [ c |
+							c.name == getContextKey
+						].flatMap[parameters].filter[p|p.name == getParameterKey].isEmpty) {
+						/*
+						 * Cannot find the parameter in the imported EventDefinition's contexts.
+						 */
+						warning("Cannot find the parameter " + getParameterKey + " in context " + getContextKey,
+							XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
+					}
+				}
+			}
+		}
+	}
+
+	@Check
+	def checkGetSession(XMemberFeatureCall f) {
+		if (f.isStringGet && f.targetIsSession) {
+			val getKey = (f.memberCallArguments.get(0) as XStringLiteral).value
+			val executionModel = ExecutionUtils.getContainingExecutionModel(f)
+			val allMemberFeatureCalls = EcoreUtil2.eAllOfType(executionModel, XMemberFeatureCall)
+			val putCallsWithSameKey = allMemberFeatureCalls.filter [ fCall |
+				/*
+				 * Look for a session.put call with the same key
+				 */
+				fCall.isPutWithStringKey && fCall.targetIsSession &&
+					(fCall.memberCallArguments.get(0) as XStringLiteral).value == getKey
+			]
+			if (putCallsWithSameKey.empty) {
+				warning("The session key " + getKey + " is not set in the execution model",
+					XbasePackage.Literals.XMEMBER_FEATURE_CALL__MEMBER_CALL_ARGUMENTS)
+			}
+		}
+	}
+
+	@Check
+	def checkCustomTransitionSiblingIsNotWildcard(Transition t) {
+		if (!t.isIsWildcard) {
+			val state = t.eContainer as com.xatkit.execution.State
+			if (!state.transitions.filter[isIsWildcard].empty) {
+				error("Custom transitions are not allowed if a wildcard transition already exists",
+					ExecutionPackage.Literals.TRANSITION__CONDITION, CUSTOM_TRANSITION_SIBLING_IS_WILDCARD)
+			}
+		}
+	}
+
+	@Check
+	def checkWildcardTransitionHasNoSiblings(Transition t) {
+		if (t.isIsWildcard) {
+			val state = t.eContainer as com.xatkit.execution.State
+			if (state.transitions.size > 1) {
+				error("A wildcard transition cannot be defined with other transitions",
+					ExecutionPackage.Literals.TRANSITION__IS_WILDCARD, WILDCARD_TRANSITION_HAS_SIBLINGS)
+			}
+		}
+	}
+
+	@Check
+	def checkTransitionDoesNotTargetDefaultFallback(Transition t) {
+		if (t.state.name == "Default_Fallback") {
+			error("A transition cannot target the Default_Fallback state", ExecutionPackage.Literals.TRANSITION__STATE,
+				TRANSITION_TO_DEFAULT_FALLBACK)
+		}
+	}
+
+	@Check
+	def checkStateIsReachable(com.xatkit.execution.State s) {
+		if (s.name != "Default_Fallback" && s.name != "Init") {
+			/*
+			 * Default Fallback should be unreachable, we don't want to go in this state explicitly.
+			 * Init does not need to be reachable, it is executed when initializing the state machine anyway.
+			 */
+			val executionModel = s.eContainer as ExecutionModel
+			val transitionsToState = executionModel.states.flatMap[it.transitions].filter [ t |
+				t.eContainer !== s && t.state == s
+			]
+			if (transitionsToState.isEmpty) {
+				warning("State " + s.name + " is unreachable (can't find any transition targeting" + s.name + ")",
+					ExecutionPackage.Literals.STATE__NAME, STATE_IS_UNREACHABLE)
+			}
+		}
+	}
+
+	@Check
+	def checkStateNameIsUnique(com.xatkit.execution.State s) {
+		val executionModel = ExecutionUtils.getContainingExecutionModel(s)
+		if (executionModel.states.filter[exState|exState.name == s.name].size > 1) {
+			error("State names must be unique", ExecutionPackage.Literals.STATE__NAME)
+		}
+	}
+
+	@Check
+	def checkStateDoesNotDefineFallbackIfItContainsAWildcardTransition(com.xatkit.execution.State s) {
+		val containsWildcardTransition = s.transitions.filter[it.isIsWildcard].iterator.hasNext
+		if (containsWildcardTransition && s.fallback !== null) {
+			error("States with a wildcard transition cannot define a custom fallback",
+				ExecutionPackage.Literals.STATE__FALLBACK, FALLBACK_SHOULD_NOT_EXIST)
+		}
+	}
+
+	@Check
+	def checkStateContainsAtLeastOneTransition(com.xatkit.execution.State s) {
+		if (s.name != "Default_Fallback" && s.transitions.isNullOrEmpty) {
+			error("A state should contain at least one transition", ExecutionPackage.Literals.STATE__NAME,
+				INIT_STATE_DOES_NOT_HAVE_TRANSITION)
+		}
+	}
+
+	@Check
+	def checkFallbackStateDoesNotDefineFallback(com.xatkit.execution.State s) {
+		if (s.name == "Default_Fallback") {
+			if (s.fallback !== null) {
+				error("Default_Fallback state cannot define a fallback", ExecutionPackage.Literals.STATE__FALLBACK,
+					FALLBACK_SHOULD_NOT_EXIST)
+			}
+		}
+	}
+
+	@Check
+	def checkFallbackStateDoesNotDefineNext(com.xatkit.execution.State s) {
+		if (s.name == "Default_Fallback") {
+			if (!s.transitions.isNullOrEmpty) {
+				for (var i = 0; i < s.transitions.length; i++) {
+					error("Default_Fallback state cannot define transitions",
+						ExecutionPackage.Literals.STATE__TRANSITIONS, i, TRANSITIONS_SHOULD_NOT_EXIST)
+				}
+			}
+		}
+	}
+
+	@Check
+	def checkDefaultFallbackContainsBody(com.xatkit.execution.State s) {
+		if (s.name == "Default_Fallback") {
+			if (s.body === null) {
+				warning("Default_Fallback state should have a non-empty body", ExecutionPackage.Literals.STATE__NAME,
+					FALLBACK_DOES_NOT_HAVE_BODY)
+			}
+		}
+	}
+
+	@Check
+	def checkInitStateExists(ExecutionModel m) {
+		if (m.states.filter[it.name == "Init"].empty) {
+			for (var i = 0; i < m.states.length; i++) {
+				error("The execution model must contain an init state",
+					ExecutionPackage.Literals.EXECUTION_MODEL__STATES, i, INIT_STATE_DOES_NOT_EXIST)
+			}
+		}
+	}
+
+	@Check
+	def checkDefaultFallbackStateExists(ExecutionModel m) {
+		if (m.states.filter[it.name == "Default_Fallback"].empty) {
+			for (var i = 0; i < m.states.length; i++) {
+				error("The execution model must contain a Default_Fallback state",
+					ExecutionPackage.Literals.EXECUTION_MODEL__STATES, i, FALLBACK_STATE_DOES_NOT_EXIST)
+			}
+		}
+	}
+
+	@Check
+	def checkTransitionIsNotInfiniteLoop(Transition t) {
+		if (t.isIsWildcard) {
+			if (t.eContainer instanceof com.xatkit.execution.State) {
+				val containingState = t.eContainer as com.xatkit.execution.State
+				if (t.state == containingState) {
+					val index = containingState.transitions.indexOf(t)
+					error("Infinite loop on state " + t.state.name, containingState,
+						ExecutionPackage.Literals.STATE__TRANSITIONS, index, TRANSITION_IS_INFINITE_LOOP)
+				}
+			}
+		}
+	}
+
+	private def boolean isStringGet(XMemberFeatureCall f) {
+		return f.feature.simpleName == "get" && f.memberCallArguments.size == 1 &&
+			f.memberCallArguments.get(0) instanceof XStringLiteral
+	}
+
+	private def boolean isPutWithStringKey(XMemberFeatureCall f) {
+		return f.feature.simpleName == "put" && f.memberCallArguments.size == 2 &&
+			f.memberCallArguments.get(0) instanceof XStringLiteral
+	}
+
+	private def boolean targetIsContext(XMemberFeatureCall f) {
+		/*
+		 * Check for both "context" and "getContext", the latter is used to access the context of a received event/intent.
+		 */
+		if(f.memberCallTarget instanceof XFeatureCall) {
+			return (f.memberCallTarget as XFeatureCall).feature.simpleName == "context"
+		} else if(f.memberCallTarget instanceof XMemberFeatureCall) {
+			return (f.memberCallTarget as XMemberFeatureCall).feature.simpleName == "getContext"
+		} else {
+			return false
+		}
+	}
+
+	private def boolean targetIsSession(XMemberFeatureCall f) {
+		return f.memberCallTarget instanceof XFeatureCall &&
+			(f.memberCallTarget as XFeatureCall).feature.simpleName == "session"
+	}
 }

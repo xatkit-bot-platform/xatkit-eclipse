@@ -4,10 +4,21 @@
 package com.xatkit.language.execution.ui
 
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import com.xatkit.language.execution.ui.highlights.ExecutionSemanticHighlightingCalculator
+import com.xatkit.language.execution.ui.highlights.ExecutionHighlightingConfiguration
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
  */
 @FinalFieldsConstructor
 class ExecutionUiModule extends AbstractExecutionUiModule {
+	
+	override bindIdeSemanticHighlightingCalculator() {
+		return ExecutionSemanticHighlightingCalculator
+	}
+	
+	override bindIHighlightingConfiguration() {
+		return ExecutionHighlightingConfiguration
+	}
+	
 }

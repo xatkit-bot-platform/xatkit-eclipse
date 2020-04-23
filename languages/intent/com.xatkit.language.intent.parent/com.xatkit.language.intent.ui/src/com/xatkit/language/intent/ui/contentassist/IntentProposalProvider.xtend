@@ -20,10 +20,6 @@ class IntentProposalProvider extends AbstractIntentProposalProvider {
 	
 	@Inject extension IntentGrammarAccess
 	
-	override complete_RequiresContext(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		requiresContextAccess.group.createKeywordProposal(context, acceptor)
-	}
-	
 	override complete_CreatesContext(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		createsContextAccess.group.createKeywordProposal(context, acceptor)
 	}
@@ -41,7 +37,10 @@ class IntentProposalProvider extends AbstractIntentProposalProvider {
 	}
 	
 	def createKeywordProposal(Group group, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		if(group == null) {
+		/*
+		 * This allows to propose a sequence of keywords as a proposal (e.g. "creates" "context")
+		 */
+		if(group === null) {
 			return null
 		}
 		val proposalString = group.elements.filter(Keyword).map[value].join(" ") + " "
