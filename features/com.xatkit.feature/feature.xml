@@ -2,7 +2,7 @@
 <feature
       id="com.xatkit.feature"
       label="Xatkit DSLs"
-      version="3.0.1.qualifier"
+      version="4.0.0.qualifier"
       provider-name="SOM Research Lab">
 
    <description url="https://github.com/xatkit-bot-platform/xatkit/wiki">
@@ -330,22 +330,18 @@ version(s), and exceptions or additional permissions here}.&quot;
       <import plugin="org.eclipse.emf.common" version="2.15.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.15.0" match="greaterOrEqual"/>
       <import plugin="org.antlr.runtime"/>
-      <import plugin="com.xatkit.intent" version="2.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.platform" version="2.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.intent" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.utils" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.platform" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.platform.ide" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.intent.ui" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.execution" version="2.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.common" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.metamodels-utils" version="2.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.execution" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.execution.ide" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.common.ui" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.intent.ide" version="3.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.common" version="2.0.1" match="greaterOrEqual"/>
-      <import plugin="com.xatkit.language.common.ide" version="3.0.1" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.intent" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.platform" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.language.intent" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.utils" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.language.platform" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.language.intent.ui" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.execution" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.language.common" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.metamodels-utils" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.language.execution" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.language.common.ui" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="com.xatkit.common" version="3.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -357,13 +353,6 @@ version(s), and exceptions or additional permissions here}.&quot;
 
    <plugin
          id="com.xatkit.language.platform"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.xatkit.language.platform.ide"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -391,13 +380,6 @@ version(s), and exceptions or additional permissions here}.&quot;
          unpack="false"/>
 
    <plugin
-         id="com.xatkit.language.execution.ide"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="com.xatkit.language.execution.ui"
          download-size="0"
          install-size="0"
@@ -413,13 +395,6 @@ version(s), and exceptions or additional permissions here}.&quot;
 
    <plugin
          id="com.xatkit.language.intent"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.xatkit.language.intent.ide"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -448,13 +423,6 @@ version(s), and exceptions or additional permissions here}.&quot;
 
    <plugin
          id="com.xatkit.language.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.xatkit.language.common.ide"
          download-size="0"
          install-size="0"
          version="0.0.0"
