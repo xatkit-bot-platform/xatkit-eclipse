@@ -4,7 +4,7 @@
     <ownedRepresentations xsi:type="description_1:DiagramDescription" name="XatkitDiagram" initialisation="true" domainClass="execution::ExecutionModel" enablePopupBars="true">
       <metamodel href="com.xatkit.execution#/"/>
       <defaultLayer name="Default">
-        <nodeMappings name="StateNode" semanticCandidatesExpression="feature:states" domainClass="execution::State">
+        <nodeMappings name="StateNode" semanticCandidatesExpression="aql:self.states ->reject(e | e.name.equals('Default_Fallback'))" domainClass="execution::State">
           <style xsi:type="style:SquareDescription" labelSize="9" showIcon="false" sizeComputationExpression="8" labelPosition="node" resizeKind="NSEW" width="100">
             <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
