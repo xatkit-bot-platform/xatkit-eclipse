@@ -21,7 +21,7 @@
           <conditionnalStyles predicateExpression="aql:not self.state.name.equals('Init')">
             <style sizeComputationExpression="2">
               <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='dark_red']"/>
-              <centerLabelStyleDescription labelSize="12">
+              <centerLabelStyleDescription labelSize="12" labelExpression="aql:self.getAccessedEvents() -> first().name">
                 <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
               </centerLabelStyleDescription>
             </style>
