@@ -5,15 +5,17 @@
       <metamodel href="com.xatkit.execution#/"/>
       <defaultLayer name="Default">
         <nodeMappings name="StateNode" semanticCandidatesExpression="aql:self.states ->reject(e | e.name.equals('Default_Fallback'))" domainClass="execution::State">
-          <style xsi:type="style:SquareDescription" labelSize="9" showIcon="false" sizeComputationExpression="8" labelPosition="node" resizeKind="NSEW" width="100" color="//@userColorsPalettes[name='Colors']/@entries[name='light_xatkit']">
-            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
-            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
-          </style>
           <conditionnalStyles predicateExpression="aql:self.name.equals('Init')">
-            <style xsi:type="style:DotDescription" labelSize="12" showIcon="false" labelPosition="node" resizeKind="NSEW">
+            <style xsi:type="style:WorkspaceImageDescription" labelSize="12" showIcon="false" labelExpression="aql:''" sizeComputationExpression="-1" labelPosition="node" resizeKind="NSEW" workspacePath="/com.xatkit.language.execution.design/images/init-state.svg">
               <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
               <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
-              <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </style>
+          </conditionnalStyles>
+          <conditionnalStyles predicateExpression="aql:not self.name.equals('Init')">
+            <style xsi:type="style:WorkspaceImageDescription" labelSize="12" showIcon="false" sizeComputationExpression="-1" labelPosition="node" resizeKind="NSEW" workspacePath="/com.xatkit.language.execution.design/images/state.svg">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelFormat>bold</labelFormat>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             </style>
           </conditionnalStyles>
         </nodeMappings>
@@ -28,8 +30,8 @@
           </conditionnalStyles>
           <conditionnalStyles predicateExpression="aql:not self.isWildcard">
             <style strokeColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_event']" sizeComputationExpression="2" routingStyle="manhattan">
-              <centerLabelStyleDescription labelSize="12" showIcon="false" labelExpression="aql:self.getAccessedEvents() -> first().name">
-                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <centerLabelStyleDescription labelSize="12" showIcon="false" labelExpression="aql:self.getAccessedEvents() -> first().name" labelColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_event']">
+                <labelFormat>bold</labelFormat>
               </centerLabelStyleDescription>
             </style>
           </conditionnalStyles>
