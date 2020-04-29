@@ -12,10 +12,9 @@
             </style>
           </conditionnalStyles>
           <conditionnalStyles predicateExpression="aql:not self.name.equals('Init')">
-            <style xsi:type="style:WorkspaceImageDescription" labelSize="12" showIcon="false" sizeComputationExpression="-1" labelPosition="node" resizeKind="NSEW" workspacePath="/com.xatkit.language.execution.design/images/state.svg">
+            <style xsi:type="style:WorkspaceImageDescription" labelSize="12" showIcon="false" labelColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_state']" sizeComputationExpression="-1" labelPosition="node" resizeKind="NSEW" workspacePath="/com.xatkit.language.execution.design/images/state.svg">
               <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
               <labelFormat>bold</labelFormat>
-              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             </style>
           </conditionnalStyles>
         </nodeMappings>
@@ -41,7 +40,7 @@
     <ownedJavaExtensions qualifiedClassName="com.xatkit.language.execution.design.AccessedEventsServices"/>
   </ownedViewpoints>
   <userColorsPalettes name="Colors">
-    <entries xsi:type="description:UserFixedColor" red="251" green="233" blue="231" name="light_xatkit"/>
+    <entries xsi:type="description:UserFixedColor" red="0" green="92" blue="153" name="xatkit_state"/>
     <entries xsi:type="description:UserFixedColor" red="204" green="0" blue="0" name="xatkit_event"/>
   </userColorsPalettes>
 </description:Group>
