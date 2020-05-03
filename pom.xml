@@ -37,7 +37,8 @@
 	<modules>
 		<module>target-platform</module>
 		<module>languages</module>
-		<module>features/com.xatkit.feature</module>
+		<module>sirius/com.xatkit.language.execution.design</module>
+		<module>features</module>
 		<module>update/com.xatkit.update</module>
 		<module>utils/com.xatkit.utils</module>
 	</modules>
@@ -97,7 +98,9 @@
                             <artifact>
                                 <groupId>com.xatkit</groupId>
                                 <artifactId>com.xatkit.target</artifactId>
-                                <version>${project.version}</version>
+                                <!-- We need to put the explicit version of the target platform because the sirius plugin 
+                                does not have the same version of the rest of the plugins -->
+                                <version>4.0.0-SNAPSHOT</version>
                             </artifact>
                         </target>
 	                    <environments>
