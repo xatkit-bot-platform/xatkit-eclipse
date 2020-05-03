@@ -3,5 +3,8 @@
    <feature url="features/com.xatkit.feature_4.0.0.qualifier.jar" id="com.xatkit.feature" version="4.0.0.qualifier">
       <category name="Xatkit"/>
    </feature>
+   <feature url="features/com.xatkit.sirius.feature_1.0.0.qualifier.jar" id="com.xatkit.sirius.feature" version="1.0.0.qualifier">
+      <category name="Xatkit"/>
+   </feature>
    <category-def name="Xatkit" label="Xatkit"/>
 </site>
