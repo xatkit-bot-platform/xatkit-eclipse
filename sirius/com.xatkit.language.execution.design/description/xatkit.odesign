@@ -30,7 +30,7 @@
           </conditionnalStyles>
           <conditionnalStyles predicateExpression="aql:not self.isWildcard">
             <style strokeColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_event']" sizeComputationExpression="2" routingStyle="manhattan">
-              <centerLabelStyleDescription labelSize="12" showIcon="false" labelExpression="aql:self.getAccessedEvents() -> first().name" labelColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_event']">
+              <centerLabelStyleDescription labelSize="12" showIcon="false" labelExpression="service:getAccessedEventName()" labelColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_event']">
                 <labelFormat>bold</labelFormat>
               </centerLabelStyleDescription>
             </style>

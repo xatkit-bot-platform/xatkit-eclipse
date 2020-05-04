@@ -21,6 +21,21 @@ import org.eclipse.xtext.xbase.XFeatureCall;
  */
 public class AccessedEventsServices {
     
+	
+	/**
+     * Returns the name of the first {@link EventDefinition} accessed from the provided {@link Transition}.
+     *
+     * @param transition the {@link Transition} to retrieve the {@link EventDefinition} accesses from
+     * @return the a {@link String} holding the name of the first  {@link EventDefinition} accessed in the provided {@link Transition}
+     */
+	public String getAccessedEventName(Transition transition) {
+		Set<EventDefinition> accessedEvents = getAccessedEvents(transition);
+		if(!accessedEvents.isEmpty()) {
+			Optional<EventDefinition> eventDefinition =  accessedEvents.stream().findFirst();
+			return eventDefinition.isPresent()?eventDefinition.get().getName():"";
+		}
+		return "";
+	}
  
     /**
      * Returns the {@link EventDefinition}s accessed from the provided {@link Transition}.
@@ -36,6 +51,7 @@ public class AccessedEventsServices {
         Iterable<EObject> transitionContents = transition::eAllContents;
         return getAccessedEvents(transitionContents);
     }
+    
 
     /**
      * Returns all the {@link EventDefinition} accesses from the provided {@link EObject}s.
