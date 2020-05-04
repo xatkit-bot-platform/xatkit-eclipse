@@ -304,6 +304,7 @@ version(s), and exceptions or additional permissions here}.&quot;
       <import plugin="com.xatkit.intent"/>
       <import plugin="com.xatkit.execution"/>
       <import plugin="org.eclipse.sirius.diagram.elk" version="6.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.elk.alg.layered" version="0.5.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

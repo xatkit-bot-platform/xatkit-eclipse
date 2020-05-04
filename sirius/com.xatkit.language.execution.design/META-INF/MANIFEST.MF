@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.xtext.xbase,
  com.xatkit.intent,
  com.xatkit.execution,
- org.eclipse.sirius.diagram.elk;bundle-version="6.3.0"
+ org.eclipse.sirius.diagram.elk,
+ org.eclipse.elk.alg.layered;bundle-version="0.5.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %providerName
