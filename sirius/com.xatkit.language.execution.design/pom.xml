@@ -9,13 +9,12 @@
 	    <relativePath>../..</relativePath>
     </parent>
 
-    <artifactId>com.xatkit.feature</artifactId>
 
-    <packaging>eclipse-feature</packaging>
+    <artifactId>com.xatkit.language.execution.design</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+	<packaging>eclipse-plugin</packaging>
 
-    <name>Xatkit DSL Eclipse Feature</name>
-
-    <dependencies>
+	    <dependencies>
 
 		<!-- EMF -->
 		
@@ -26,11 +25,11 @@
 
 		<!-- Xatkit Internal -->
 
-		<dependency>
-			<groupId>com.xatkit</groupId>
-			<artifactId>com.xatkit.utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.xatkit</groupId> -->
+<!-- 			<artifactId>com.xatkit.utils</artifactId> -->
+<!-- 			<version>4.0.0-SNAPSHOT</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
     		<groupId>com.xatkit</groupId>
@@ -63,5 +62,5 @@
     	</dependency>
 
     </dependencies>
-    
+
 </project>

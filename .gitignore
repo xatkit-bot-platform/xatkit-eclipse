@@ -46,4 +46,5 @@ data/
 **/xtend-gen
 **/.launch
 **/src-gen
+**/bin
 **/plugin.xml_gen

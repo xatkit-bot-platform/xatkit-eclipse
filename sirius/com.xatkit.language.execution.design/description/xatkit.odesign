@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" name="XatkitDesign" version="12.0.0.2017041100">
+  <ownedViewpoints name="Xatkit" label="Xatkit" modelFileExtension="execution">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="XatkitDiagram" initialisation="true" domainClass="execution::ExecutionModel" enablePopupBars="true">
+      <metamodel href="com.xatkit.execution#/"/>
+      <layout xsi:type="description_1:CustomLayoutConfiguration" id="org.eclipse.elk.layered" label="ELK Layered" description="Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as possible into one direction by placing nodes into subsequent layers. This implementation supports different routing styles (straight, orthogonal, splines); if orthogonal routing is selected, arbitrary port constraints are respected, thus enabling the layout of block diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of compound graphs with cross-hierarchy edges is supported when the respective option is activated on the top level."/>
+      <defaultLayer name="Default">
+        <nodeMappings name="StateNode" semanticCandidatesExpression="aql:self.states ->reject(e | e.name.equals('Default_Fallback'))" domainClass="execution::State">
+          <conditionnalStyles predicateExpression="aql:self.name.equals('Init')">
+            <style xsi:type="style:WorkspaceImageDescription" labelSize="12" showIcon="false" labelExpression="aql:''" sizeComputationExpression="-1" labelPosition="node" resizeKind="NSEW" workspacePath="/com.xatkit.language.execution.design/images/init-state.svg">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </style>
+          </conditionnalStyles>
+          <conditionnalStyles predicateExpression="aql:not self.name.equals('Init')">
+            <style xsi:type="style:WorkspaceImageDescription" labelSize="12" showIcon="false" labelColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_state']" sizeComputationExpression="-1" labelPosition="node" resizeKind="NSEW" workspacePath="/com.xatkit.language.execution.design/images/state.svg">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelFormat>bold</labelFormat>
+            </style>
+          </conditionnalStyles>
+        </nodeMappings>
+        <edgeMappings name="TransitionEdge" sourceMapping="//@ownedViewpoints[name='Xatkit']/@ownedRepresentations[name='XatkitDiagram']/@defaultLayer/@nodeMappings[name='StateNode']" targetMapping="//@ownedViewpoints[name='Xatkit']/@ownedRepresentations[name='XatkitDiagram']/@defaultLayer/@nodeMappings[name='StateNode']" targetFinderExpression="feature:state" sourceFinderExpression="feature:eContainer" domainClass="execution::Transition" useDomainElement="true">
+          <conditionnalStyles predicateExpression="aql:self.isWildcard">
+            <style sizeComputationExpression="2" routingStyle="manhattan">
+              <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <centerLabelStyleDescription labelSize="12" showIcon="false" labelExpression="aql:self.getAccessedEvents() -> first().name">
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              </centerLabelStyleDescription>
+            </style>
+          </conditionnalStyles>
+          <conditionnalStyles predicateExpression="aql:not self.isWildcard">
+            <style strokeColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_event']" sizeComputationExpression="2" routingStyle="manhattan">
+              <centerLabelStyleDescription labelSize="12" showIcon="false" labelExpression="service:getAccessedEventName()" labelColor="//@userColorsPalettes[name='Colors']/@entries[name='xatkit_event']">
+                <labelFormat>bold</labelFormat>
+              </centerLabelStyleDescription>
+            </style>
+          </conditionnalStyles>
+        </edgeMappings>
+      </defaultLayer>
+    </ownedRepresentations>
+    <ownedJavaExtensions qualifiedClassName="com.xatkit.language.execution.design.AccessedEventsServices"/>
+  </ownedViewpoints>
+  <userColorsPalettes name="Colors">
+    <entries xsi:type="description:UserFixedColor" red="0" green="92" blue="153" name="xatkit_state"/>
+    <entries xsi:type="description:UserFixedColor" red="204" green="0" blue="0" name="xatkit_event"/>
+  </userColorsPalettes>
+</description:Group>

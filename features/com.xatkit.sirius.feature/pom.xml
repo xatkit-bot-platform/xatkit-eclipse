@@ -9,13 +9,14 @@
 	    <relativePath>../..</relativePath>
     </parent>
 
-    <artifactId>com.xatkit.feature</artifactId>
+    <artifactId>com.xatkit.sirius.feature</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 
     <packaging>eclipse-feature</packaging>
 
-    <name>Xatkit DSL Eclipse Feature</name>
-
-    <dependencies>
+    <name>Xatkit Graphical Representation Feature</name>
+	
+	    <dependencies>
 
 		<!-- EMF -->
 		
@@ -26,11 +27,11 @@
 
 		<!-- Xatkit Internal -->
 
-		<dependency>
-			<groupId>com.xatkit</groupId>
-			<artifactId>com.xatkit.utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.xatkit</groupId> -->
+<!-- 			<artifactId>com.xatkit.utils</artifactId> -->
+<!-- 			<version>${project.version}</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
     		<groupId>com.xatkit</groupId>
@@ -63,5 +64,6 @@
     	</dependency>
 
     </dependencies>
+ 
     
 </project>
