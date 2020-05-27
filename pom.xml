@@ -38,6 +38,7 @@
 		<module>target-platform</module>
 		<module>languages</module>
 		<module>sirius/com.xatkit.language.execution.design</module>
+		<module>examples/com.xatkit.examples</module>
 		<module>features</module>
 		<module>update/com.xatkit.update</module>
 		<module>utils/com.xatkit.utils</module>
