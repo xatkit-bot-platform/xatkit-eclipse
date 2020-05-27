@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension
+       point="org.eclipse.emf.common.ui.examples">
+    <example
+          id="Greetings Bot"
+          wizardID="com.xatkit.examples.wizard.GreetingWizard">
+       <projectDescriptor
+             contentURI="examples/GreetingsBot.zip"
+             description="Greetings bot"
+             name="GreetingsBot">
+       </projectDescriptor>
+    </example>
+    <example
+          id="SimpleQABot"
+          wizardID="com.xatkit.examples.wizard.SimpleQABot">
+       <projectDescriptor
+             contentURI="examples/SimpleQABot.zip"
+             description="SimpleQA bot"
+             name="SimpleQABot">
+       </projectDescriptor>
+    </example>
+ </extension>
+ <extension
+       point="org.eclipse.ui.newWizards">
+    <category
+          id="com.xatkit.examples.category"
+          name="Xatkit Examples"
+          parentCategory="org.eclipse.ui.Examples">
+    </category>
+    <wizard
+          category="org.eclipse.ui.Examples/com.xatkit.examples.category"
+          class="org.eclipse.emf.common.ui.wizard.ExampleInstallerWizard"
+          icon="icons/xatkit_project.png"
+          id="com.xatkit.examples.wizard.GreetingWizard"
+          name="GreetingsBot Example"
+          project="true">
+       <description>
+          Greetings bot example
+       </description>
+    </wizard>
+    <wizard
+          category="org.eclipse.ui.Examples/com.xatkit.examples.category"
+          class="org.eclipse.emf.common.ui.wizard.ExampleInstallerWizard"
+          icon="icons/xatkit_project.png"
+          id="com.xatkit.examples.wizard.SimpleQABot"
+          name="SimpleQABot Example"
+          project="true">
+       <description>
+          Simple QA bot example
+       </description>
+    </wizard>
+ </extension>
+</plugin>
